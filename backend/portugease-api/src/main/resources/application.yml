@@ -3,9 +3,9 @@ spring:
     name: portugease-api
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/portugease
-    username: postgres
-    password: password
+    url: ${PORTUGEASE_DB_URL:jdbc:postgresql://localhost:5432/portugease}
+    username: ${PORTUGEASE_DB_USERNAME:postgres}
+    password: ${PORTUGEASE_DB_PASSWORD:password}
 
   jpa:
     hibernate:
@@ -16,8 +16,8 @@ spring:
     open-in-view: false
 
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
 
 server:
-  port: 8080
+  port: ${PORTUGEASE_API_PORT:8080}
