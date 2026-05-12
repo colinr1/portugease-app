@@ -1,0 +1,84 @@
+$color-green: #1B8A5A;
+$color-green-hover: #147348;
+$color-green-light: #E8F5EF;
+
+$color-blue: #2457A6;
+$color-blue-hover: #1B4382;
+$color-blue-light: #EAF0FA;
+
+$color-gold: #F2B705;
+$color-gold-hover: #D99E00;
+$color-gold-light: #FFF4CC;
+
+$color-coral: #E86F51;
+$color-coral-light: #FDE9E3;
+
+$color-teal: #2AA7A5;
+$color-teal-light: #E8F7F7;
+
+$color-white: #FAFAF7;
+$color-sand: #F3E9D2;
+$color-grey: #E6E6DF;
+$color-muted: #5F6368;
+$color-black: #171717;
+
+$color-error: #D94A4A;
+$color-error-light: #FCE8E8;
+$color-success-light: #DDF7E8;
+
+:root {
+  --color-green: #1B8A5A;
+  --color-green-hover: #147348;
+  --color-green-light: #E8F5EF;
+
+  --color-blue: #2457A6;
+  --color-blue-hover: #1B4382;
+  --color-blue-light: #EAF0FA;
+
+  --color-gold: #F2B705;
+  --color-gold-hover: #D99E00;
+  --color-gold-light: #FFF4CC;
+
+  --color-coral: #E86F51;
+  --color-coral-light: #FDE9E3;
+
+  --color-teal: #2AA7A5;
+  --color-teal-light: #E8F7F7;
+
+  --color-white: #FAFAF7;
+  --color-sand: #F3E9D2;
+  --color-grey: #E6E6DF;
+  --color-muted: #5F6368;
+  --color-black: #171717;
+
+  --color-error: #D94A4A;
+  --color-error-light: #FCE8E8;
+  --color-success-light: #DDF7E8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--color-black);
+  background: var(--color-white);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
