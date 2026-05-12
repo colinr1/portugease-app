@@ -8,7 +8,8 @@
   [attr.aria-label]="city.name + ' ' + city.status"
 >
   <span class="pin"></span>
-  <span class="label">{{ city.name }}</span>
+  <span class="label">{{ city.name }} <span *ngIf="locked" class="lock" aria-hidden="true"><img
+    src="assets/images/icons/lock-icon.svg" alt="Lock icon"></span></span>
 
-  <span *ngIf="locked" class="lock">Locked</span>
+<!--  <span *ngIf="locked" class="lock">Locked</span>-->
 </a>
