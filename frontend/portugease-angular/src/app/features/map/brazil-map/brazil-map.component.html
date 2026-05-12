@@ -1,0 +1,14 @@
+<div class="map-shell">
+  <div class="map-scene">
+    <img
+      class="map-image"
+      [src]="mapImagePath"
+      alt="Map of Brazil"
+    />
+
+    <app-city-marker
+      *ngFor="let city of cities"
+      [city]="city"
+    />
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<a
+  class="city-marker"
+  [routerLink]="locked ? null : ['/cities', city.id]"
+  [class.locked]="locked"
+  [class.completed]="city.status === 'COMPLETED'"
+  [style.left]="markerStyle['left']"
+  [style.top]="markerStyle['top']"
+  [attr.aria-label]="city.name + ' ' + city.status"
+>
+  <span class="pin"></span>
+  <span class="label">{{ city.name }}</span>
+
+  <span *ngIf="locked" class="lock">Locked</span>
+</a>
