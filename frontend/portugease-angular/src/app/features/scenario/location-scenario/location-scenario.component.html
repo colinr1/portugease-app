@@ -1,0 +1,52 @@
+<section class="scenario-page">
+  <header class="scenario-header">
+    <div>
+      <p class="eyebrow">Interactive location</p>
+      <h1>{{ lesson.title }}</h1>
+      <p>{{ lesson.description }}</p>
+    </div>
+  </header>
+
+  <div class="scenario-stage">
+    <app-image-scene
+      [imagePath]="lesson.backgroundImage?.filePath || ''"
+      [altText]="lesson.backgroundImage?.altText || lesson.title"
+      [hotspots]="modalOpen ? [] : lesson.hotspots"
+      (hotspotSelected)="onHotspotSelected($event)"
+    ></app-image-scene>
+
+    <div class="desktop-modal-layer">
+      <app-scenario-interaction-modal
+        *ngIf="selectedActivity && selectedHotspot"
+        [activity]="selectedActivity"
+        [hotspot]="selectedHotspot"
+        (closed)="closeNormalModal()"
+      ></app-scenario-interaction-modal>
+
+      <app-intro-dialogue-modal
+        *ngIf="introDialogueOpen && lesson.introDialogue"
+        [dialogue]="lesson.introDialogue"
+        (closed)="onIntroDialogueClosed()"
+        (finished)="onIntroDialogueFinished()"
+      ></app-intro-dialogue-modal>
+    </div>
+  </div>
+
+  <div class="mobile-modal-layer">
+    <app-scenario-interaction-modal
+      *ngIf="selectedActivity && selectedHotspot"
+      class="below-image-modal"
+      [activity]="selectedActivity"
+      [hotspot]="selectedHotspot"
+      (closed)="closeNormalModal()"
+    ></app-scenario-interaction-modal>
+
+    <app-intro-dialogue-modal
+      *ngIf="introDialogueOpen && lesson.introDialogue"
+      class="below-image-modal"
+      [dialogue]="lesson.introDialogue"
+      (closed)="onIntroDialogueClosed()"
+      (finished)="onIntroDialogueFinished()"
+    ></app-intro-dialogue-modal>
+  </div>
+</section>

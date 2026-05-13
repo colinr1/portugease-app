@@ -1,0 +1,29 @@
+.city-page {
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+}
+
+.city-card {
+  width: min(960px, 100%);
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: 1.5rem;
+  background: rgba(250, 250, 247, 0.84);
+  box-shadow: 0 22px 60px rgba(23, 23, 23, 0.28);
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin: 0 0 0.5rem;
+  }
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--color-blue);
+}

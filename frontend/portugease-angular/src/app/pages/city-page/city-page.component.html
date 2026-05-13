@@ -1,1 +1,16 @@
-<p>city-page works!</p>
+<p *ngIf="loading">Loading city...</p>
+<p *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<section
+  *ngIf="city"
+  class="city-page"
+  [style.background-image]="backgroundImageStyle"
+>
+  <div class="city-card">
+    <p class="eyebrow">City level</p>
+    <h1>{{ city.name }}</h1>
+    <p>{{ city.description }}</p>
+
+    <app-city-location-menu [locations]="city.locations"></app-city-location-menu>
+  </div>
+</section>

@@ -1,1 +1,7 @@
-<p>location-page works!</p>
+<p *ngIf="loading">Loading scenario...</p>
+<p *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<app-location-scenario
+  *ngIf="lesson"
+  [lesson]="lesson"
+/>
