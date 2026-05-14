@@ -1,0 +1,7 @@
+<div class="hint-panel" *ngIf="hint">
+  <button type="button" (click)="revealHint()" [disabled]="showHint">
+    {{ showHint ? 'Hint shown' : 'Show hint' }}
+  </button>
+
+  <p *ngIf="showHint">{{ hint }}</p>
+</div>

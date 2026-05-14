@@ -1,0 +1,29 @@
+.feedback {
+  margin-top: 0.25rem;
+  padding: 1.1rem;
+  border-radius: 1.15rem;
+  background: rgba(250, 250, 247, 0.86);
+  border: 1px solid rgba(230, 230, 223, 0.95);
+  box-shadow: 0 10px 30px rgba(23, 23, 23, 0.08);
+
+  &.correct {
+    background: var(--color-success-light);
+    border-color: var(--color-green);
+  }
+
+  &.incorrect {
+    background: var(--color-error-light);
+    border-color: var(--color-error);
+  }
+
+  h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.45rem;
+  }
+
+  .score {
+    margin: 0;
+    font-weight: 900;
+    color: var(--color-black);
+  }
+}

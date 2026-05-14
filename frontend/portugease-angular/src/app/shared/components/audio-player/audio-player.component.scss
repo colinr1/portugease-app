@@ -1,0 +1,10 @@
+.audio-player {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--color-teal-light);
+
+  audio {
+    width: 100%;
+    accent-color: var(--color-teal);
+  }
+}

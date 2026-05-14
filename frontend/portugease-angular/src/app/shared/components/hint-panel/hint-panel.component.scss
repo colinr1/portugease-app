@@ -1,0 +1,18 @@
+.hint-panel {
+  margin-top: 1rem;
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    background: var(--color-gold-light);
+    color: var(--color-black);
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  p {
+    margin-top: 0.75rem;
+    color: var(--color-muted);
+  }
+}
