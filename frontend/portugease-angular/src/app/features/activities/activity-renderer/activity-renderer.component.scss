@@ -1,0 +1,85 @@
+.activity-engine {
+  display: grid;
+  gap: 1rem;
+  padding-top: 0.75rem;
+}
+
+.activity-header {
+  display: grid;
+  gap: 0.3rem;
+  padding-right: 2.5rem;
+
+  h3 {
+    margin: 0;
+    font-size: clamp(1.25rem, 3vw, 1.65rem);
+    color: var(--color-black);
+  }
+}
+
+.activity-type {
+  margin: 0;
+  color: var(--color-blue);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.error-message {
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  background: var(--color-error-light);
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.submitting-message {
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.primary-button,
+.secondary-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.75rem 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 4px solid var(--color-blue);
+    outline-offset: 3px;
+  }
+}
+
+.primary-button {
+  background: var(--color-green);
+  color: var(--color-white);
+
+  &:hover {
+    background: var(--color-green-hover);
+  }
+}
+
+.secondary-button {
+  background: var(--color-blue);
+  color: var(--color-white);
+
+  &:hover {
+    background: var(--color-blue-hover);
+  }
+}
+
+.unsupported-message {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--color-gold-light);
+  color: var(--color-black);
+}

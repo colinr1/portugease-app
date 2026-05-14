@@ -1,0 +1,29 @@
+<section class="activity-form">
+  <h4 *ngIf="question">{{ question }}</h4>
+
+  <div class="options">
+    <label
+      *ngFor="let option of options"
+      class="option"
+      [class.selected]="selectedOptionId === option.id"
+    >
+      <input
+        type="radio"
+        name="multipleChoiceOption"
+        [value]="option.id"
+        [disabled]="disabled"
+        (change)="selectedOptionId = option.id"
+      />
+      <span>{{ option.text }}</span>
+    </label>
+  </div>
+
+  <button
+    type="button"
+    class="submit-button"
+    [disabled]="disabled || !selectedOptionId"
+    (click)="submit()"
+  >
+    Submit answer
+  </button>
+</section>

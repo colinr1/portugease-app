@@ -1,1 +1,50 @@
-<p>activity-renderer works!</p>
+<section class="activity-engine">
+  <header class="activity-header">
+    <p class="activity-type">{{ activityType.replaceAll('_', ' ') }}</p>
+    <h3>{{ activity.title }}</h3>
+  </header>
+
+  <app-hint-panel
+    *ngIf="hint && !hasFeedback"
+    [hint]="hint"
+    [hintsUsed]="hintsUsed"
+    (hintUsed)="onHintUsed()"
+  ></app-hint-panel>
+
+  <p *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </p>
+
+  <ng-container *ngIf="!hasFeedback; else feedbackState">
+    <div [ngSwitch]="activityType">
+      <app-multiple-choice-activity
+        *ngSwitchCase="'MULTIPLE_CHOICE'"
+        [activity]="activity"
+        [disabled]="submitting"
+        (answerSubmitted)="onAnswerSubmitted($event)"
+      ></app-multiple-choice-activity>
+
+      <p *ngSwitchDefault class="unsupported-message">
+        Unsupported activity type: {{ activity.activityType }}
+      </p>
+    </div>
+  </ng-container>
+
+  <ng-template #feedbackState>
+    <app-feedback-panel [feedback]="feedback"></app-feedback-panel>
+
+    <div class="feedback-actions">
+      <button type="button" class="secondary-button" (click)="resetActivity()">
+        Try again
+      </button>
+
+      <button type="button" class="primary-button" (click)="returnToScenario()">
+        Return to scenario
+      </button>
+    </div>
+  </ng-template>
+
+  <p *ngIf="submitting" class="submitting-message">
+    Checking your answer...
+  </p>
+</section>
