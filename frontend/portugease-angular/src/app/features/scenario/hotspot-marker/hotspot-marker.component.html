@@ -1,0 +1,47 @@
+<button
+  type="button"
+  class="hotspot-marker"
+  [class.intro-dialogue]="isIntroDialogue"
+  [class.vocab-tooltip]="isVocabularyTooltip"
+  [style.left]="markerStyle['left']"
+  [style.top]="markerStyle['top']"
+  [attr.aria-label]="ariaLabel"
+  [attr.aria-describedby]="tooltipOpen && isVocabularyTooltip ? tooltipId : null"
+  (pointerdown)="onPointerDown()"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  (click)="selectHotspot($event)"
+>
+  <span class="pulse" aria-hidden="true"></span>
+
+  <span class="marker-visual" aria-hidden="true">
+    <img
+      *ngIf="hotspot.iconUrl"
+      class="marker-icon"
+      [src]="hotspot.iconUrl"
+      alt=""
+    />
+
+    <span *ngIf="!hotspot.iconUrl" class="dot"></span>
+  </span>
+
+  <span
+    *ngIf="!isVocabularyTooltip"
+    class="label"
+    aria-hidden="true"
+  >
+    {{ hotspot.label }}
+  </span>
+
+  <span
+    *ngIf="isVocabularyTooltip && tooltipOpen && vocabulary"
+    class="vocab-tooltip-box"
+    [id]="tooltipId"
+    role="tooltip"
+  >
+    <strong lang="pt-BR">{{ vocabulary.portugueseText }}</strong>
+    <span>{{ vocabulary.englishTranslation }}</span>
+  </span>
+</button>

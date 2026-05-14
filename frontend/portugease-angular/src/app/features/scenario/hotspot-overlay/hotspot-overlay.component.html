@@ -1,0 +1,7 @@
+<div class="hotspot-layer" aria-label="Interactive scene hotspots">
+  <app-hotspot-marker
+    *ngFor="let hotspot of visibleHotspots; trackBy: trackByHotspotId"
+    [hotspot]="hotspot"
+    (selected)="hotspotSelected.emit($event)"
+  />
+</div>

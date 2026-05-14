@@ -1,0 +1,29 @@
+<div class="scene-overlay">
+  <section
+    class="scene-panel"
+    role="dialog"
+    aria-modal="false"
+    [attr.aria-label]="activity?.title || hotspot.label || 'Scenario interaction'"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      type="button"
+      class="close-button"
+      (click)="close()"
+      aria-label="Close activity"
+    >
+      ×
+    </button>
+
+    <app-activity-renderer
+      *ngIf="activity"
+      [activity]="activity"
+      (finished)="close()"
+    ></app-activity-renderer>
+
+    <section *ngIf="!activity" class="content-fallback">
+      <h2>{{ hotspot.label }}</h2>
+      <p>Select an activity or learning item to continue.</p>
+    </section>
+  </section>
+</div>

@@ -1,0 +1,94 @@
+<div class="scene-overlay">
+  <section
+    class="scene-panel"
+    role="dialog"
+    aria-modal="false"
+    aria-label="Intro dialogue"
+    (click)="stopBackdropClick($event)"
+  >
+    <header class="dialogue-header">
+      <div class="dialogue-meta">
+        <p class="eyebrow">Intro dialogue</p>
+
+        <p class="progress-text" aria-live="polite">
+          {{ progressText }}
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button
+          type="button"
+          class="audio-button"
+          *ngIf="currentLine?.audioPath"
+          [attr.aria-label]="playAudioLabel"
+          (click)="playCurrentAudio()"
+        >
+          Play audio
+        </button>
+
+        <button
+          type="button"
+          class="next-button"
+          [attr.aria-label]="isFinalLine ? 'Finish introductory dialogue' : 'Go to next dialogue line'"
+          (click)="goNext()"
+        >
+          {{ nextButtonLabel }}
+        </button>
+
+        <button
+          #closeButton
+          type="button"
+          class="close-button"
+          aria-label="Close introductory dialogue"
+          (click)="close()"
+        >
+          ×
+        </button>
+      </div>
+    </header>
+
+    <section
+      *ngIf="currentLine; else emptyDialogue"
+      class="dialogue-line"
+      aria-live="polite"
+    >
+      <div class="translation-card">
+        <p class="portuguese-text" lang="pt-BR">
+          {{ currentLine.portugueseText }}
+        </p>
+
+        <div class="translation-divider" aria-hidden="true"></div>
+
+        <p class="english-translation">
+          {{ currentLine.englishTranslation }}
+        </p>
+      </div>
+
+      <audio
+        #lineAudio
+        *ngIf="currentLine.audioPath"
+        [src]="currentLine.audioPath"
+        preload="auto"
+      ></audio>
+
+      <p *ngIf="audioAutoplayBlocked" class="audio-warning">
+        Audio could not start automatically. Use Play audio to listen.
+      </p>
+    </section>
+
+    <ng-template #emptyDialogue>
+      <section class="empty-state">
+        <p>No dialogue lines are available.</p>
+
+        <button
+          type="button"
+          class="next-button"
+          aria-label="Close introductory dialogue"
+          (click)="close()"
+        >
+          Close
+        </button>
+      </section>
+    </ng-template>
+  </section>
+</div>

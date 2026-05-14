@@ -1,0 +1,252 @@
+.scene-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px 6px;
+  pointer-events: none;
+}
+
+.scene-panel {
+  pointer-events: auto;
+  position: relative;
+  width: 100%;
+  max-height: min(30%, 230px);
+  overflow: auto;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.9rem;
+  background: rgba(250, 250, 247, 0.82);
+  color: var(--color-black);
+  box-shadow: 0 12px 34px rgba(23, 23, 23, 0.24);
+  backdrop-filter: blur(7px) saturate(1.15);
+  border: 1px solid rgba(250, 250, 247, 0.75);
+}
+
+.dialogue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  margin-bottom: 0.45rem;
+}
+
+.dialogue-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-blue);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.progress-text {
+  display: inline-block;
+  margin: 0;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(234, 240, 250, 0.9);
+  color: var(--color-blue-hover);
+  font-size: 0.68rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.close-button,
+.audio-button,
+.next-button {
+  border: 0;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+}
+
+.audio-button,
+.next-button {
+  padding: 0.38rem 0.65rem;
+  font-size: 0.86rem;
+  line-height: 1;
+}
+
+.audio-button {
+  background: rgba(232, 247, 247, 0.95);
+  color: var(--color-blue-hover);
+
+  &:hover {
+    background: var(--color-teal);
+    color: var(--color-white);
+  }
+}
+
+.next-button {
+  background: var(--color-green);
+  color: var(--color-white);
+
+  &:hover {
+    background: var(--color-green-hover);
+  }
+}
+
+.close-button {
+  width: 1.85rem;
+  height: 1.85rem;
+  background: rgba(230, 230, 223, 0.95);
+  color: var(--color-black);
+  font-size: 1.25rem;
+  line-height: 1;
+
+  &:hover {
+    background: var(--color-grey);
+  }
+}
+
+.dialogue-line {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.translation-card {
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.75rem;
+  background: rgba(250, 250, 247, 0.86);
+  border: 1px solid rgba(230, 230, 223, 0.95);
+}
+
+.portuguese-text,
+.english-translation {
+  margin: 0;
+  color: var(--color-black);
+  line-height: 1.26;
+  font-weight: 750;
+}
+
+.portuguese-text {
+  font-size: clamp(1.08rem, 1.9vw, 1.25rem);
+}
+
+.english-translation {
+  font-size: clamp(0.86rem, 1.55vw, 0.98rem);
+  font-style: italic;
+}
+
+.translation-divider {
+  height: 1px;
+  margin: 0.38rem 0;
+  background: rgba(23, 23, 23, 0.16);
+}
+
+.audio-warning {
+  margin: 0;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.7rem;
+  background: rgba(255, 244, 204, 0.92);
+  color: var(--color-black);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.empty-state {
+  margin-top: 0.4rem;
+  padding: 0.65rem;
+  border-radius: 0.75rem;
+  background: rgba(250, 250, 247, 0.86);
+  border: 1px solid rgba(230, 230, 223, 0.95);
+}
+
+@media (max-width: 700px) {
+  .scene-overlay {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    display: block;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  .scene-panel {
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    border-radius: 1rem;
+  }
+
+  .dialogue-header {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .audio-button,
+  .next-button {
+    padding: 0.38rem 0.58rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 460px) {
+  .dialogue-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+
+  .header-actions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+
+    .audio-button,
+    .next-button {
+      flex: 1 1 auto;
+    }
+
+    .close-button {
+      flex: 0 0 auto;
+    }
+  }
+
+  :host.below-image-modal {
+    display: block;
+    width: 100%;
+  }
+
+  :host.below-image-modal .scene-overlay {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    display: block;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  :host.below-image-modal .scene-panel {
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    border-radius: 1rem;
+  }
+}

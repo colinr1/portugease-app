@@ -1,0 +1,23 @@
+<div class="scene-shell">
+  <div class="image-scene" [class.loaded]="imageLoaded">
+    <img
+      *ngIf="imagePath"
+      class="scene-image"
+      [src]="imagePath"
+      [alt]="altText"
+      draggable="false"
+      (load)="onImageLoad()"
+      (error)="onImageError()"
+    />
+
+    <div *ngIf="!imagePath || imageFailed" class="image-error">
+      <p>Scene image could not be loaded.</p>
+    </div>
+
+    <app-hotspot-overlay
+      *ngIf="imageLoaded"
+      [hotspots]="hotspots"
+      (hotspotSelected)="onHotspotSelected($event)"
+    />
+  </div>
+</div>
