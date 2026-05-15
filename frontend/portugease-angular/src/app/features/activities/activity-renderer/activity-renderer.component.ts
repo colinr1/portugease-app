@@ -9,6 +9,7 @@ import { ActivityAttemptResponse } from '../../../core/models/attempt.model';
 import { ActivityApiService } from '../../../core/services/activity-api.service';
 
 import { MultipleChoiceActivityComponent } from '../multiple-choice-activity/multiple-choice-activity.component';
+import { MatchingActivityComponent } from '../matching-activity/matching-activity.component';
 import { FeedbackPanelComponent } from '../../../shared/components/feedback-panel/feedback-panel.component';
 import { HintPanelComponent } from '../../../shared/components/hint-panel/hint-panel.component';
 
@@ -21,6 +22,7 @@ import { HintPanelComponent } from '../../../shared/components/hint-panel/hint-p
     NgSwitchCase,
     NgSwitchDefault,
     MultipleChoiceActivityComponent,
+    MatchingActivityComponent,
     FeedbackPanelComponent,
     HintPanelComponent
   ],
