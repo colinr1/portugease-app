@@ -1,0 +1,72 @@
+.activity-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.sentence-box {
+  min-height: 3.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--color-blue-light);
+  border: 1px dashed var(--color-blue);
+  font-weight: 800;
+}
+
+.tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  button {
+    border: 1px solid var(--color-grey);
+    border-radius: 999px;
+    padding: 0.6rem 0.9rem;
+    background: var(--color-white);
+    cursor: pointer;
+    font-weight: 700;
+
+    &:hover {
+      background: var(--color-green-light);
+      border-color: var(--color-green);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    background: var(--color-blue);
+    color: var(--color-white);
+
+    &:hover {
+      background: var(--color-blue-hover);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  }
+
+  .primary {
+    background: var(--color-green);
+    color: var(--color-white);
+
+    &:hover {
+      background: var(--color-green-hover);
+    }
+  }
+}

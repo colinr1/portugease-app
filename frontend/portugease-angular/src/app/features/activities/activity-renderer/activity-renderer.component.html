@@ -24,6 +24,13 @@
         (answerSubmitted)="onAnswerSubmitted($event)"
       ></app-multiple-choice-activity>
 
+      <app-sentence-builder-activity
+        *ngSwitchCase="'SENTENCE_BUILDING'"
+        [activity]="activity"
+        [disabled]="submitting"
+        (answerSubmitted)="onAnswerSubmitted($event)"
+      ></app-sentence-builder-activity>
+
       <app-matching-activity
         *ngSwitchCase="'WORD_MATCHING'"
         [activity]="activity"

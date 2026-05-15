@@ -1,0 +1,35 @@
+<section class="activity-form">
+  <div class="sentence-box">
+    {{ selectedTokens.join(' ') || 'Build your sentence...' }}
+  </div>
+
+  <div class="tokens">
+    <button
+      type="button"
+      *ngFor="let token of shuffledTokens"
+      [disabled]="disabled"
+      (click)="addToken(token)"
+    >
+      {{ token }}
+    </button>
+  </div>
+
+  <div class="actions">
+    <button type="button" [disabled]="disabled" (click)="removeLastToken()">
+      Undo
+    </button>
+
+    <button type="button" [disabled]="disabled" (click)="clear()">
+      Clear
+    </button>
+
+    <button
+      type="button"
+      class="primary"
+      [disabled]="disabled || selectedTokens.length === 0"
+      (click)="submit()"
+    >
+      Submit sentence
+    </button>
+  </div>
+</section>
