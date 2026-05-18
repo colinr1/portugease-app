@@ -8,6 +8,7 @@ public record IntroDialogueLineResponse(
         String portugueseText,
         String englishTranslation,
         String audioPath,
-        List<String> targetLearningItemKeys
+        List<String> targetLearningItemKeys,
+        List<IntroDialogueFocusMarkerResponse> focusMarkers
 ) {
 }

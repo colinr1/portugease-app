@@ -8,6 +8,7 @@ import com.portugease.asset.dto.AssetMetadataResponse;
 import com.portugease.common.exception.ResourceNotFoundException;
 import com.portugease.hotspot.HotspotMapper;
 import com.portugease.hotspot.dto.HotspotResponse;
+import com.portugease.lesson.dto.IntroDialogueFocusMarkerResponse;
 import com.portugease.lesson.dto.IntroDialogueLineResponse;
 import com.portugease.lesson.dto.IntroDialogueResponse;
 import com.portugease.lesson.dto.LessonDetailResponse;
@@ -50,10 +51,6 @@ public class LessonContentService {
 
     @Transactional(readOnly = true)
     public LessonDetailResponse getLesson(UUID lessonId) {
-        /*
-         * MVP design:
-         * lessonId is the same as locationId.
-         */
         Location location = locationRepository.findById(lessonId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + lessonId));
 
@@ -153,11 +150,51 @@ public class LessonContentService {
                     valueAsString(rawLine.get("portugueseText")),
                     valueAsString(rawLine.get("englishTranslation")),
                     valueAsString(rawLine.get("audioPath")),
-                    valueAsStringList(rawLine.get("targetLearningItemKeys"))
+                    valueAsStringList(rawLine.get("targetLearningItemKeys")),
+                    extractFocusMarkers(rawLine.get(("focusMarkers")))
             ));
         }
 
         return lines;
+    }
+
+    private List<IntroDialogueFocusMarkerResponse> extractFocusMarkers(Object focusMarkersObject) {
+        if (!(focusMarkersObject instanceof List<?> rawFocusMarkers)) {
+            return Collections.emptyList();
+        }
+
+        List<IntroDialogueFocusMarkerResponse> focusMarkers = new ArrayList<>();
+
+        for (Object focusMarkerObject : rawFocusMarkers) {
+            if (!(focusMarkerObject instanceof Map<?, ?> rawFocusMarker)) {
+                continue;
+            }
+
+            focusMarkers.add(new IntroDialogueFocusMarkerResponse(
+                    valueAsString(rawFocusMarker.get("id")),
+                    valueAsDouble(rawFocusMarker.get("xPercent")),
+                    valueAsDouble(rawFocusMarker.get("yPercent")),
+                    valueAsString(rawFocusMarker.get("ariaLabel"))
+            ));
+        }
+
+        return focusMarkers;
+    }
+
+    private Double valueAsDouble(Object value) {
+        if (value instanceof Number numberValue) {
+            return numberValue.doubleValue();
+        }
+
+        if (value == null) {
+            return null;
+        }
+
+        try {
+            return Double.parseDouble(value.toString());
+        } catch (NumberFormatException exception) {
+            return null;
+        }
     }
 
     private String getLessonTitle(Location location) {
