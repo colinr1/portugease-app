@@ -1,0 +1,26 @@
+<section class="activity-form">
+  <app-audio-player [src]="audioUrl"></app-audio-player>
+
+  <label>
+    What did you hear?
+    <input
+      type="text"
+      [(ngModel)]="answerText"
+      [disabled]="disabled"
+      placeholder="Type what you heard"
+    />
+  </label>
+
+  <p *ngIf="transcript" class="transcript-note">
+    A transcript may be shown after feedback if extra support is needed.
+  </p>
+
+  <button
+    type="button"
+    class="submit-button"
+    [disabled]="disabled || !answerText.trim()"
+    (click)="submit()"
+  >
+    Submit listening answer
+  </button>
+</section>

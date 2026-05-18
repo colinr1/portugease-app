@@ -38,6 +38,27 @@
         (answerSubmitted)="onAnswerSubmitted($event)"
       ></app-matching-activity>
 
+      <app-listening-activity
+        *ngSwitchCase="'LISTENING'"
+        [activity]="activity"
+        [disabled]="submitting"
+        (answerSubmitted)="onAnswerSubmitted($event)"
+      ></app-listening-activity>
+
+      <app-transformation-activity
+        *ngSwitchCase="'SENTENCE_TRANSFORMATION'"
+        [activity]="activity"
+        [disabled]="submitting"
+        (answerSubmitted)="onAnswerSubmitted($event)"
+      ></app-transformation-activity>
+
+      <app-multiple-choice-activity
+        *ngSwitchCase="'SCENARIO_CHALLENGE'"
+        [activity]="activity"
+        [disabled]="submitting"
+        (answerSubmitted)="onAnswerSubmitted($event)"
+      ></app-multiple-choice-activity>
+
       <p *ngSwitchDefault class="unsupported-message">
         Unsupported activity type: {{ activity.activityType }}
       </p>

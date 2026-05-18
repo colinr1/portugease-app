@@ -1,0 +1,28 @@
+<section class="activity-form">
+  <p *ngIf="prompt" class="prompt">
+    {{ prompt }}
+  </p>
+
+  <p *ngIf="sourceSentence" class="source">
+    {{ sourceSentence }}
+  </p>
+
+  <label>
+    Your answer
+    <input
+      type="text"
+      [(ngModel)]="answerText"
+      [disabled]="disabled"
+      placeholder="Type your transformed sentence"
+    />
+  </label>
+
+  <button
+    type="button"
+    class="submit-button"
+    [disabled]="disabled || !answerText.trim()"
+    (click)="submit()"
+  >
+    Submit transformation
+  </button>
+</section>
