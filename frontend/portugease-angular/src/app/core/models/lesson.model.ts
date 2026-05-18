@@ -9,6 +9,7 @@ export interface IntroDialogueLine {
   englishTranslation: string;
   audioPath?: string;
   targetLearningItemKeys?: string[];
+  focusMarkers?: IntroDialogueFocusMarker[];
 }
 
 export interface IntroDialogue {
@@ -44,4 +45,11 @@ export interface LessonDetail {
   hotspots: Hotspot[];
   activities: ActivityContent[];
   introDialogue?: IntroDialogue | null;
+}
+
+export interface IntroDialogueFocusMarker {
+  id: string;
+  xPercent: number;
+  yPercent: number;
+  ariaLabel?: string;
 }

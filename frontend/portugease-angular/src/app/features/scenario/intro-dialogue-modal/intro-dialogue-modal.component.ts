@@ -23,6 +23,7 @@ export class IntroDialogueModalComponent implements AfterViewInit {
 
   @Output() closed = new EventEmitter<void>();
   @Output() finished = new EventEmitter<void>();
+  @Output() lineChanged = new EventEmitter<IntroDialogueLine | null>();
 
   @ViewChild('closeButton') closeButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('lineAudio') lineAudio?: ElementRef<HTMLAudioElement>;
@@ -33,6 +34,7 @@ export class IntroDialogueModalComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     queueMicrotask(() => {
       this.closeButton?.nativeElement.focus();
+      this.emitCurrentLine();
       this.playCurrentAudio();
     });
   }
@@ -97,12 +99,14 @@ export class IntroDialogueModalComponent implements AfterViewInit {
 
   goNext(): void {
     if (this.isFinalLine) {
+      this.lineChanged.emit(null)
       this.finished.emit();
       return;
     }
 
     this.currentLineIndex++;
     this.audioAutoplayBlocked = false;
+    this.emitCurrentLine();
 
     setTimeout(() => {
       this.playCurrentAudio();
@@ -110,11 +114,16 @@ export class IntroDialogueModalComponent implements AfterViewInit {
   }
 
   close(): void {
+    this.lineChanged.emit(null);
     this.closed.emit();
   }
 
   stopBackdropClick(event: MouseEvent): void {
     event.stopPropagation();
+  }
+
+  private emitCurrentLine(): void {
+    this.lineChanged.emit(this.currentLine);
   }
 
   @HostListener('document:keydown.escape')

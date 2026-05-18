@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { LessonDetail } from '../../../core/models/lesson.model';
+import { IntroDialogueFocusMarker, IntroDialogueLine, LessonDetail } from '../../../core/models/lesson.model';
 import { ActivityContent } from '../../../core/models/activity.model';
 import { Hotspot } from '../../../core/models/hotspot.model';
 import {
@@ -31,6 +31,7 @@ export class LocationScenarioComponent implements OnChanges {
 
   introDialogueOpen = false;
   introDialogueOpenedFrom: 'AUTO_OPEN' | 'HOTSPOT' | null = null;
+  introFocusMarkers: IntroDialogueFocusMarker[] = [];
 
   get modalOpen(): boolean {
     return this.introDialogueOpen || Boolean(this.selectedActivity && this.selectedHotspot);
@@ -64,6 +65,10 @@ export class LocationScenarioComponent implements OnChanges {
       activity.id === hotspot.activityId ||
       activity.activityKey === hotspot.activityKey
     );
+  }
+
+  onIntroDialogueLineChanged(line: IntroDialogueLine | null): void {
+    this.introFocusMarkers = line?.focusMarkers ?? [];
   }
 
   closeNormalModal(): void {
@@ -123,6 +128,7 @@ export class LocationScenarioComponent implements OnChanges {
 
     this.introDialogueOpenedFrom = openedFrom;
     this.introDialogueOpen = true;
+    this.introFocusMarkers = [];
 
     this.markSeenInProgress = false;
     this.markSeenCompletedForCurrentOpening = false;
@@ -130,6 +136,7 @@ export class LocationScenarioComponent implements OnChanges {
 
   private closeIntroDialogueAndMarkSeen(source: IntroDialogueSeenSource): void {
     this.introDialogueOpen = false;
+    this.introFocusMarkers = [];
 
     if (!this.lesson?.locationId) {
       this.resetCurrentIntroOpening();
@@ -163,6 +170,7 @@ export class LocationScenarioComponent implements OnChanges {
   private resetIntroDialogueOpeningState(): void {
     this.introDialogueOpen = false;
     this.introDialogueOpenedFrom = null;
+    this.introFocusMarkers = [];
     this.autoOpenCheckCompleted = false;
     this.markSeenInProgress = false;
     this.markSeenCompletedForCurrentOpening = false;

@@ -14,6 +14,20 @@
       <p>Scene image could not be loaded.</p>
     </div>
 
+    <div
+      *ngIf="imageLoaded && introFocusMarkers.length"
+      class="intro-focus-overlay"
+      aria-hidden="true"
+    >
+      <span
+        *ngFor="let marker of introFocusMarkers"
+        class="intro-focus-marker"
+        [style.left.%]="marker.xPercent"
+        [style.top.%]="marker.yPercent"
+        [attr.title]="marker.ariaLabel || 'Dialogue focus marker'"
+      ></span>
+    </div>
+
     <app-hotspot-overlay
       *ngIf="imageLoaded"
       [hotspots]="hotspots"

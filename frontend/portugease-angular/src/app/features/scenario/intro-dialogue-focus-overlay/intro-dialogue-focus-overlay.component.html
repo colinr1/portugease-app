@@ -1,0 +1,13 @@
+<div
+  class="intro-focus-overlay"
+  *ngIf="markers.length > 0"
+  aria-hidden="true"
+>
+  <span
+    *ngFor="let marker of markers"
+    class="intro-focus-marker"
+    [style.left.%]="marker.xPercent"
+    [style.top.%]="marker.yPercent"
+    [attr.title]="markerLabel(marker)"
+  ></span>
+</div>

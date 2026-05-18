@@ -12,6 +12,7 @@
       [imagePath]="lesson.backgroundImage?.filePath || ''"
       [altText]="lesson.backgroundImage?.altText || lesson.title"
       [hotspots]="modalOpen ? [] : lesson.hotspots"
+      [introFocusMarkers]="introFocusMarkers"
       (hotspotSelected)="onHotspotSelected($event)"
     ></app-image-scene>
 
@@ -26,6 +27,7 @@
       <app-intro-dialogue-modal
         *ngIf="introDialogueOpen && lesson.introDialogue"
         [dialogue]="lesson.introDialogue"
+        (lineChanged)="onIntroDialogueLineChanged($event)"
         (closed)="onIntroDialogueClosed()"
         (finished)="onIntroDialogueFinished()"
       ></app-intro-dialogue-modal>
@@ -45,6 +47,7 @@
       *ngIf="introDialogueOpen && lesson.introDialogue"
       class="below-image-modal"
       [dialogue]="lesson.introDialogue"
+      (lineChanged)="onIntroDialogueLineChanged($event)"
       (closed)="onIntroDialogueClosed()"
       (finished)="onIntroDialogueFinished()"
     ></app-intro-dialogue-modal>

@@ -1,0 +1,44 @@
+.intro-focus-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.intro-focus-marker {
+  position: absolute;
+  width: 0.85rem;
+  height: 0.85rem;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #1b8a5a;
+  border: 2px solid #fafaf7;
+  box-shadow:
+    0 0 0 4px rgba(27, 138, 90, 0.22),
+    0 0.35rem 1rem rgba(23, 23, 23, 0.24);
+  pointer-events: none;
+  animation: intro-focus-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes intro-focus-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow:
+      0 0 0 3px rgba(27, 138, 90, 0.2),
+      0 0.35rem 1rem rgba(23, 23, 23, 0.22);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.14);
+    box-shadow:
+      0 0 0 7px rgba(27, 138, 90, 0.14),
+      0 0.45rem 1.15rem rgba(23, 23, 23, 0.24);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow:
+      0 0 0 3px rgba(27, 138, 90, 0.2),
+      0 0.35rem 1rem rgba(23, 23, 23, 0.22);
+  }
+}
