@@ -10,6 +10,7 @@ import {
 import { ImageSceneComponent } from '../image-scene/image-scene.component';
 import { ScenarioInteractionModalComponent } from '../scenario-interaction-modal/scenario-interaction-modal.component';
 import { IntroDialogueModalComponent } from '../intro-dialogue-modal/intro-dialogue-modal.component';
+import { BeachTaskTrayComponent } from '../beach-task-tray/beach-task-tray.component';
 
 @Component({
   selector: 'app-location-scenario',
@@ -18,7 +19,8 @@ import { IntroDialogueModalComponent } from '../intro-dialogue-modal/intro-dialo
     NgIf,
     ImageSceneComponent,
     ScenarioInteractionModalComponent,
-    IntroDialogueModalComponent
+    IntroDialogueModalComponent,
+    BeachTaskTrayComponent
   ],
   templateUrl: './location-scenario.component.html',
   styleUrl: './location-scenario.component.scss'
@@ -32,9 +34,22 @@ export class LocationScenarioComponent implements OnChanges {
   introDialogueOpen = false;
   introDialogueOpenedFrom: 'AUTO_OPEN' | 'HOTSPOT' | null = null;
   introFocusMarkers: IntroDialogueFocusMarker[] = [];
+  taskTrayOpen = false;
 
   get modalOpen(): boolean {
     return this.introDialogueOpen || Boolean(this.selectedActivity && this.selectedHotspot);
+  }
+
+  get sceneHotspots(): Hotspot[] {
+    return this.lesson.hotspots.filter(hotspot => !this.isActivityHotspot(hotspot));
+  }
+
+  get visibleSceneHotspots(): Hotspot[] {
+    return this.modalOpen || this.taskTrayOpen ? [] : this.sceneHotspots;
+  }
+
+  onTaskTrayOpenChange(open: boolean): void {
+    this.taskTrayOpen = open;
   }
 
   private autoOpenCheckCompleted = false;
@@ -69,6 +84,16 @@ export class LocationScenarioComponent implements OnChanges {
 
   onIntroDialogueLineChanged(line: IntroDialogueLine | null): void {
     this.introFocusMarkers = line?.focusMarkers ?? [];
+  }
+
+  onActivityTaskSelected(activity: ActivityContent): void {
+    this.taskTrayOpen = false;
+
+    this.introDialogueOpen = false;
+    this.introDialogueOpenedFrom = null;
+
+    this.selectedActivity = activity;
+    this.selectedHotspot = this.createActivityTaskHotspot(activity);
   }
 
   closeNormalModal(): void {
@@ -179,6 +204,31 @@ export class LocationScenarioComponent implements OnChanges {
   private resetCurrentIntroOpening(): void {
     this.introDialogueOpenedFrom = null;
     this.markSeenInProgress = false;
+  }
+
+  private createActivityTaskHotspot(activity: ActivityContent): Hotspot {
+    return {
+      id: `task-${activity.id}`,
+      label: activity.title,
+      xPercent: 0,
+      yPercent: 0,
+      visible: false,
+      activityId: activity.id,
+      activityKey: activity.activityKey,
+      activityType: activity.activityType,
+      hotspotType: 'ACTIVITY',
+      style: 'ACTIVITY',
+      ariaLabel: `Open ${activity.title} activity`
+    };
+  }
+
+  private isActivityHotspot(hotspot: Hotspot): boolean {
+    return (
+      hotspot.hotspotType === 'ACTIVITY' ||
+      hotspot.style === 'ACTIVITY' ||
+      Boolean(hotspot.activityId) ||
+      Boolean(hotspot.activityKey)
+    );
   }
 
   private isIntroDialogueHotspot(hotspot: Hotspot): boolean {

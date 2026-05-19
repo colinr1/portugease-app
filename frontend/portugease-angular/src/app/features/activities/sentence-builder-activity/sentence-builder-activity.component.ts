@@ -77,11 +77,6 @@ export class SentenceBuilderActivityComponent implements OnChanges {
       [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
     }
 
-    /**
-     * Avoid the rare case where the shuffled order is identical to the correct order.
-     * For very short lists, this is not always avoidable, but for normal sentence
-     * builder activities it prevents giving the answer away.
-     */
     if (shuffled.length > 1 && this.arraysEqual(shuffled, tokens)) {
       return this.rotateTokens(shuffled);
     }

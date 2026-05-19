@@ -10,7 +10,7 @@ import { AudioPlayerComponent } from '../../../shared/components/audio-player/au
 @Component({
   selector: 'app-listening-activity',
   standalone: true,
-  imports: [FormsModule, NgIf, AudioPlayerComponent],
+  imports: [FormsModule, AudioPlayerComponent],
   templateUrl: './listening-activity.component.html',
   styleUrl: './listening-activity.component.scss'
 })

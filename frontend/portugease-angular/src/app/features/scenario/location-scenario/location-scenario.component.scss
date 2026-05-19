@@ -32,6 +32,15 @@
   margin: 0 auto;
 }
 
+
+.beach-task-tray-layer {
+  position: absolute;
+  left: clamp(0.75rem, 2vw, 1.25rem);
+  right: clamp(0.75rem, 2vw, 1.25rem);
+  bottom: clamp(0.75rem, 2vw, 1.25rem);
+  z-index: 12;
+}
+
 .desktop-modal-layer {
   display: block;
 }
@@ -41,6 +50,12 @@
 }
 
 @media (max-width: 700px) {
+  .beach-task-tray-layer {
+    position: static;
+    margin: 0.75rem auto 0;
+    max-width: 1200px;
+  }
+
   .desktop-modal-layer {
     display: none;
   }

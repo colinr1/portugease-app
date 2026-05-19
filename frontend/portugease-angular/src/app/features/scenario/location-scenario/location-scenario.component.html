@@ -3,7 +3,6 @@
     <div>
       <p class="eyebrow">Interactive location</p>
       <h1>{{ lesson.title }}</h1>
-      <p>{{ lesson.description }}</p>
     </div>
   </header>
 
@@ -11,10 +10,19 @@
     <app-image-scene
       [imagePath]="lesson.backgroundImage?.filePath || ''"
       [altText]="lesson.backgroundImage?.altText || lesson.title"
-      [hotspots]="modalOpen ? [] : lesson.hotspots"
+      [hotspots]="visibleSceneHotspots"
       [introFocusMarkers]="introFocusMarkers"
       (hotspotSelected)="onHotspotSelected($event)"
     ></app-image-scene>
+
+    <div class="beach-task-tray-layer" *ngIf="!modalOpen">
+      <app-beach-task-tray
+        *ngIf="!modalOpen"
+        [activities]="lesson.activities"
+        (openChange)="onTaskTrayOpenChange($event)"
+        (activitySelected)="onActivityTaskSelected($event)"
+      ></app-beach-task-tray>
+    </div>
 
     <div class="desktop-modal-layer">
       <app-scenario-interaction-modal
