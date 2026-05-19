@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import {
   ActivityAttemptRequest,
   ActivityAttemptResponse
-} from '../../../../../../../../Documents/PortugEase-working-mvp/cleaned-up-mvp/frontend/portugease-angular/src/app/core/models/attempt.model';
+} from '../models/attempt.model';
 import { Observable } from 'rxjs';
-import { API_BASE_URL } from '../../../../../../../../Documents/PortugEase-working-mvp/cleaned-up-mvp/frontend/portugease-angular/src/app/core/services/api.config';
+import { API_BASE_URL } from './api.config';
 
 @Injectable({
   providedIn: 'root'
