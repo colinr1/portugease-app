@@ -3,11 +3,21 @@
   gap: 1rem;
 }
 
-.prompt,
-.source {
-  padding: 1rem;
+.instructions {
+  background: var(--color-white);
   border-radius: 1rem;
-  background: var(--color-sand);
+}
+
+.prompt {
+  padding: 1rem;
+  //border-radius: 1rem;
+}
+
+.source {
+  padding: .5rem 1rem;
+  background: var(--color-blue-light);
+  font-weight: 600;
+  font-style: italic;
 }
 
 label {
