@@ -17,7 +17,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:4200", "gilded-liger-f59053.netlify.app", "portugease.com", "www.portugease.com")
+                        .allowedOrigins("http://localhost:4200", "https://gilded-liger-f59053.netlify.app", "https://portugease.com", "https://www.portugease.com")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }
