@@ -2,16 +2,6 @@ export interface ActivityAttemptRequest {
   userId?: string | null;
   learnerSessionId?: string | null;
   submittedAnswer: Record<string, unknown>;
-  hintsUsed: number;
-}
-
-export interface AdaptiveSupportDecision {
-  scaffoldingLevel: 'LOW' | 'NORMAL' | 'HIGH' | string;
-  addToReview: boolean;
-  offerTranscript: boolean;
-  offerSlowerAudio: boolean;
-  reduceScaffolding: boolean;
-  messages: string[];
 }
 
 export interface ProgressUpdateSummary {
@@ -32,6 +22,13 @@ export interface ActivityAttemptResponse {
   maxScore: number;
   feedbackMessage: string;
   explanation: string;
-  adaptiveSupport: AdaptiveSupportDecision;
   progressUpdate: ProgressUpdateSummary;
+  adaptiveDifficulty?: AdaptiveDifficultyResult;
+}
+
+export interface AdaptiveDifficultyResult {
+  selectedDifficulty: 'EASY' | 'NORMAL' | 'HARD';
+  difficultyChanged: boolean;
+  newDifficulty?: 'EASY' | 'NORMAL' | 'HARD';
+  difficultyChangeMessage?: string | null;
 }

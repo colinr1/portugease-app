@@ -5,10 +5,9 @@
   </header>
 
   <app-hint-panel
-    *ngIf="hint && !hasFeedback"
-    [hint]="hint"
-    [hintsUsed]="hintsUsed"
-    (hintUsed)="onHintUsed()"
+    *ngIf="hasVisibleHints"
+    [hints]="hints"
+    [visibleHintLevel]="visibleHintLevel"
   ></app-hint-panel>
 
   <p *ngIf="errorMessage" class="error-message">

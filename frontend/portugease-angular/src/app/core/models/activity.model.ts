@@ -20,10 +20,16 @@ export type NormalizedActivityType =
   | 'SCENARIO_CHALLENGE'
   | 'LISTENING';
 
+export type DifficultyLevel = 'EASY' | 'NORMAL' | 'HARD';
+
+export interface ActivityHint {
+  level: number;
+  text: string;
+}
+
 export interface ActivityContent {
   id: string;
   locationId: string;
-  hotspotId: string;
   activityKey: string;
   activityType: ActivityType;
   title: string;
@@ -33,6 +39,7 @@ export interface ActivityContent {
   maxScore: number;
   requiredForCompletion: boolean;
   displayOrder: number;
+  selectedDifficulty?: DifficultyLevel;
 }
 
 export interface MultipleChoiceOption {

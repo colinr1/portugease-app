@@ -1,7 +1,15 @@
-<div class="hint-panel" *ngIf="hint">
-  <button type="button" (click)="revealHint()" [disabled]="showHint">
-    {{ showHint ? 'Hint shown' : 'Show hint' }}
-  </button>
+<section class="hint-panel" *ngIf="visibleHints.length > 0" aria-live="polite">
+  <div
+    *ngFor="let hint of visibleHints"
+    class="hint-item"
+    [class.extra-hint]="hint.level >= 2"
+  >
+    <p class="hint-label">
+      {{ hint.level >= 2 ? 'Extra hint' : 'Hint' }}
+    </p>
 
-  <p *ngIf="showHint">{{ hint }}</p>
-</div>
+    <p class="hint-text">
+      {{ hint.text }}
+    </p>
+  </div>
+</section>

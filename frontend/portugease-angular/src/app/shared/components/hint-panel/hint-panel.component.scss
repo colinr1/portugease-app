@@ -1,18 +1,24 @@
-.hint-panel {
-  margin-top: 1rem;
+.hint-item {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--color-gold-light);
+  border: 1px solid var(--color-blue);
+  border-left: 4px solid var(--color-blue);
 
-  button {
-    border: 0;
-    border-radius: 999px;
-    padding: 0.65rem 1rem;
-    background: var(--color-gold-light);
-    color: var(--color-black);
-    font-weight: 800;
-    cursor: pointer;
-  }
-
-  p {
+  & + & {
     margin-top: 0.75rem;
-    color: var(--color-muted);
   }
+}
+
+.hint-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hint-text {
+  margin: 0;
+  line-height: 1.5;
 }

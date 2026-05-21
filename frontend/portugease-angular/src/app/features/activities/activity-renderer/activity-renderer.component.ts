@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {Component, EventEmitter, Input, Output, SimpleChanges} from '@angular/core';
 import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
-  ActivityContent,
+  ActivityContent, ActivityHint,
   NormalizedActivityType
 } from '../../../core/models/activity.model';
 import { ActivityAttemptResponse } from '../../../core/models/attempt.model';
@@ -40,28 +40,86 @@ export class ActivityRendererComponent {
 
   @Output() finished = new EventEmitter<void>();
 
-  hintsUsed = 0;
   submitting = false;
   feedback?: ActivityAttemptResponse;
   errorMessage = '';
 
+  incorrectSubmissionCount = 0;
+  visibleHintLevel = 0;
+
   constructor(private readonly activityApi: ActivityApiService) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activity']) {
+      this.resetActivitySession();
+    }
+  }
 
   get activityType(): NormalizedActivityType {
     return this.normalizeActivityType(this.activity.activityType);
   }
 
-  get hint(): string | null {
-    const hint = this.activity.definition?.['hint'];
-    return hint == null ? null : String(hint);
+  get hints(): ActivityHint[] {
+    const definition = this.activity.definition ?? {};
+    const rawHints = definition['hints'];
+
+    if (Array.isArray(rawHints)) {
+      return rawHints
+        .map((hint, index) => {
+          if (typeof hint === 'string') {
+            return {
+              level: index + 1,
+              text: hint
+            };
+          }
+
+          if (hint && typeof hint === 'object') {
+            const hintObject = hint as Record<string, unknown>;
+
+            return {
+              level: Number(hintObject['level'] ?? index + 1),
+              text: String(hintObject['text'] ?? '')
+            };
+          }
+
+          return null;
+        })
+        .filter((hint): hint is ActivityHint => !!hint && hint.text.trim().length > 0)
+        .sort((a, b) => a.level - b.level);
+    }
+
+    const fallbackHints: ActivityHint[] = [];
+
+    const hint1 = definition['hint'];
+    const hint2 = definition['hint2'] ?? definition['secondHint'];
+
+    if (hint1 != null && String(hint1).trim().length > 0) {
+      fallbackHints.push({
+        level: 1,
+        text: String(hint1)
+      });
+    }
+
+    if (hint2 != null && String(hint2).trim().length > 0) {
+      fallbackHints.push({
+        level: 2,
+        text: String(hint2)
+      });
+    }
+
+    return fallbackHints;
+  }
+
+  get hasHints(): boolean {
+    return this.hints.length > 0;
+  }
+
+  get hasVisibleHints(): boolean {
+    return this.visibleHintLevel > 0 && this.hasHints;
   }
 
   get hasFeedback(): boolean {
     return this.feedback !== undefined;
-  }
-
-  onHintUsed(): void {
-    this.hintsUsed++;
   }
 
   onAnswerSubmitted(event: ActivityAnswerSubmitted): void {
@@ -75,11 +133,14 @@ export class ActivityRendererComponent {
     this.activityApi.submitAttempt(this.activity.id, {
       userId: null,
       learnerSessionId: null,
-      submittedAnswer,
-      hintsUsed: this.hintsUsed
+      submittedAnswer
     }).subscribe({
       next: response => {
         this.feedback = response;
+
+        if (!response.isCorrect) {
+          this.registerIncorrectSubmission()
+        }
         this.submitting = false;
       },
       error: () => {
@@ -92,11 +153,29 @@ export class ActivityRendererComponent {
   resetActivity(): void {
     this.feedback = undefined;
     this.errorMessage = '';
-    this.hintsUsed = 0;
   }
 
   returnToScenario(): void {
     this.finished.emit();
+  }
+
+  private registerIncorrectSubmission(): void {
+    this.incorrectSubmissionCount++;
+
+    if (this.incorrectSubmissionCount >= 3) {
+      this.visibleHintLevel = 2;
+      return;
+    }
+
+    this.visibleHintLevel = 1;
+  }
+
+  private resetActivitySession(): void {
+    this.feedback = undefined;
+    this.errorMessage = '';
+    this.submitting = false;
+    this.incorrectSubmissionCount = 0;
+    this.visibleHintLevel = 0;
   }
 
   private normalizeActivityType(type: string): NormalizedActivityType {
