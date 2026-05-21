@@ -23,9 +23,6 @@ public class Activity {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @Column(name = "hotspot_id", nullable = false, length = 150)
-    private String hotspotId;
-
     @Column(name = "activity_key", nullable = false, unique = true, length = 180)
     private String activityKey;
 
@@ -74,10 +71,6 @@ public class Activity {
 
     public Location getLocation() {
         return location;
-    }
-
-    public String getHotspotId() {
-        return hotspotId;
     }
 
     public String getActivityKey() {
@@ -134,10 +127,6 @@ public class Activity {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public void setHotspotId(String hotspotId) {
-        this.hotspotId = hotspotId;
     }
 
     public void setActivityKey(String activityKey) {

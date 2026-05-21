@@ -90,7 +90,6 @@ public class LessonContentService {
         return new ActivityContentResponse(
                 activity.getId(),
                 activity.getLocation().getId(),
-                activity.getHotspotId(),
                 activity.getActivityKey(),
                 activity.getActivityType(),
                 activity.getTitle(),

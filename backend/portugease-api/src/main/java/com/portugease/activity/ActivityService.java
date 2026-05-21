@@ -36,7 +36,6 @@ public class ActivityService {
         return new ActivityResponse(
                 activity.getId(),
                 activity.getLocation().getId(),
-                activity.getHotspotId(),
                 activity.getActivityKey(),
                 activity.getActivityType(),
                 activity.getTitle(),

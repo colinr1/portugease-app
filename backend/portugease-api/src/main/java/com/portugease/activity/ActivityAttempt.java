@@ -33,9 +33,6 @@ public class ActivityAttempt {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @Column(name = "hotspot_id", nullable = false, length = 150)
-    private String hotspotId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "activity_type", nullable = false, length = 50)
     private ActivityType activityType;
@@ -61,9 +58,6 @@ public class ActivityAttempt {
     @Column(name = "evaluation_json", nullable = false, columnDefinition = "jsonb")
     private Map<String, Object> evaluationJson = new HashMap<>();
 
-    @Column(name = "time_taken_seconds")
-    private Integer timeTakenSeconds;
-
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
@@ -84,10 +78,6 @@ public class ActivityAttempt {
 
     public Location getLocation() {
         return location;
-    }
-
-    public String getHotspotId() {
-        return hotspotId;
     }
 
     public ActivityType getActivityType() {
@@ -118,10 +108,6 @@ public class ActivityAttempt {
         return evaluationJson;
     }
 
-    public Integer getTimeTakenSeconds() {
-        return timeTakenSeconds;
-    }
-
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
@@ -140,10 +126,6 @@ public class ActivityAttempt {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public void setHotspotId(String hotspotId) {
-        this.hotspotId = hotspotId;
     }
 
     public void setActivityType(ActivityType activityType) {
@@ -172,10 +154,6 @@ public class ActivityAttempt {
 
     public void setEvaluationJson(Map<String, Object> evaluationJson) {
         this.evaluationJson = evaluationJson;
-    }
-
-    public void setTimeTakenSeconds(Integer timeTakenSeconds) {
-        this.timeTakenSeconds = timeTakenSeconds;
     }
 
     public void setCreatedAt(OffsetDateTime createdAt) {

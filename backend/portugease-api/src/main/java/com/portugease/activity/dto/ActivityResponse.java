@@ -8,7 +8,6 @@ import java.util.UUID;
 public record ActivityResponse(
         UUID id,
         UUID locationId,
-        String hotspotId,
         String activityKey,
         ActivityType activityType,
         String title,
