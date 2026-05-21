@@ -7,6 +7,7 @@ public record ProgressUpdateSummaryResponse(
         int incorrectAttemptsCount,
         int bestScore,
         int maxScore,
-        boolean itemMarkedForReview
+        boolean completedPerfectly,
+        int incorrectBeforeSuccess
 ) {
 }

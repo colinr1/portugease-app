@@ -1,7 +1,11 @@
+import {DifficultyLevel} from "./activity.model";
+
 export interface ActivityAttemptRequest {
   userId?: string | null;
   learnerSessionId?: string | null;
   submittedAnswer: Record<string, unknown>;
+  selectedDifficulty?: DifficultyLevel;
+  incorrectSubmissionCount?: number;
 }
 
 export interface ProgressUpdateSummary {
@@ -23,12 +27,12 @@ export interface ActivityAttemptResponse {
   feedbackMessage: string;
   explanation: string;
   progressUpdate: ProgressUpdateSummary;
-  adaptiveDifficulty?: AdaptiveDifficultyResult;
+  adaptiveDifficulty?: AdaptiveDifficultyResponse;
 }
 
-export interface AdaptiveDifficultyResult {
-  selectedDifficulty: 'EASY' | 'NORMAL' | 'HARD';
+export interface AdaptiveDifficultyResponse {
+  selectedDifficulty: DifficultyLevel;
   difficultyChanged: boolean;
-  newDifficulty?: 'EASY' | 'NORMAL' | 'HARD';
+  newDifficulty?: DifficultyLevel;
   difficultyChangeMessage?: string | null;
 }

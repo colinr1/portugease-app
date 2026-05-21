@@ -2,6 +2,7 @@ package com.portugease.activity;
 
 import com.portugease.common.enums.ActivityType;
 import com.portugease.common.enums.AttemptResult;
+import com.portugease.common.enums.DifficultyLevel;
 import com.portugease.location.Location;
 import com.portugease.user.User;
 import jakarta.persistence.*;
@@ -60,6 +61,16 @@ public class ActivityAttempt {
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "selected_difficulty", nullable = false, length = 20)
+    private DifficultyLevel selectedDifficulty = DifficultyLevel.NORMAL;
+
+    @Column(name = "incorrect_before_success", nullable = false)
+    private Integer incorrectBeforeSuccess = 0;
+
+    @Column(name = "completed_perfectly", nullable = false)
+    private Boolean completedPerfectly = false;
 
     public ActivityAttempt() {
     }
@@ -158,5 +169,29 @@ public class ActivityAttempt {
 
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public DifficultyLevel getSelectedDifficulty() {
+        return selectedDifficulty;
+    }
+
+    public void setSelectedDifficulty(DifficultyLevel selectedDifficulty) {
+        this.selectedDifficulty = selectedDifficulty;
+    }
+
+    public Integer getIncorrectBeforeSuccess() {
+        return incorrectBeforeSuccess;
+    }
+
+    public void setIncorrectBeforeSuccess(Integer incorrectBeforeSuccess) {
+        this.incorrectBeforeSuccess = incorrectBeforeSuccess;
+    }
+
+    public Boolean getCompletedPerfectly() {
+        return completedPerfectly;
+    }
+
+    public void setCompletedPerfectly(Boolean completedPerfectly) {
+        this.completedPerfectly = completedPerfectly;
     }
 }

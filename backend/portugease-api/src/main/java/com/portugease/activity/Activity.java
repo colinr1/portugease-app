@@ -62,6 +62,18 @@ public class Activity {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt = OffsetDateTime.now();
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "easy_definition_json", columnDefinition = "jsonb")
+    private Map<String, Object> easyDefinitionJson;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "normal_definition_json", columnDefinition = "jsonb")
+    private Map<String, Object> normalDefinitionJson;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "hard_definition_json", columnDefinition = "jsonb")
+    private Map<String, Object> hardDefinitionJson;
+
     public Activity() {
     }
 
@@ -121,6 +133,18 @@ public class Activity {
         return updatedAt;
     }
 
+    public Map<String, Object> getEasyDefinitionJson() {
+        return easyDefinitionJson;
+    }
+
+    public Map<String, Object> getNormalDefinitionJson() {
+        return normalDefinitionJson;
+    }
+
+    public Map<String, Object> getHardDefinitionJson() {
+        return hardDefinitionJson;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }
@@ -175,6 +199,18 @@ public class Activity {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setEasyDefinitionJson(Map<String, Object> easyDefinitionJson) {
+        this.easyDefinitionJson = easyDefinitionJson;
+    }
+
+    public void setNormalDefinitionJson(Map<String, Object> normalDefinitionJson) {
+        this.normalDefinitionJson = normalDefinitionJson;
+    }
+
+    public void setHardDefinitionJson(Map<String, Object> hardDefinitionJson) {
+        this.hardDefinitionJson = hardDefinitionJson;
     }
 
     @PrePersist

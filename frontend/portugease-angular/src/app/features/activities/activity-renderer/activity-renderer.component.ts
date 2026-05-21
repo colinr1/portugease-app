@@ -133,7 +133,9 @@ export class ActivityRendererComponent {
     this.activityApi.submitAttempt(this.activity.id, {
       userId: null,
       learnerSessionId: null,
-      submittedAnswer
+      submittedAnswer,
+      selectedDifficulty: this.activity.selectedDifficulty ?? 'NORMAL',
+      incorrectSubmissionCount: this.incorrectSubmissionCount
     }).subscribe({
       next: response => {
         this.feedback = response;

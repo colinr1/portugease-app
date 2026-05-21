@@ -1,6 +1,7 @@
 package com.portugease.activity;
 
 import com.portugease.activity.dto.ActivityEvaluationResult;
+import com.portugease.common.enums.DifficultyLevel;
 import org.springframework.stereotype.Component;
 
 import java.text.Normalizer;
@@ -12,28 +13,42 @@ public class ActivityEvaluator {
     public ActivityEvaluationResult evaluate(
             Activity activity,
             Map<String, Object> submittedAnswer,
-            int hintsUsed
+            DifficultyLevel selectedDifficulty
     ) {
         Map<String, Object> safeAnswer = submittedAnswer == null
                 ? Map.of()
                 : submittedAnswer;
 
+        DifficultyLevel difficulty = selectedDifficulty == null
+                ? DifficultyLevel.NORMAL
+                : selectedDifficulty;
+
+        Map<String, Object> definition = adaptiveDifficultyService.selectDefinition(
+                activity,
+                difficulty
+        );
+
         return switch (activity.getActivityType()) {
-            case MULTIPLE_CHOICE -> evaluateMultipleChoice(activity, safeAnswer, hintsUsed);
-            case SENTENCE_BUILDING -> evaluateSentenceBuilding(activity, safeAnswer, hintsUsed);
-            case WORD_MATCHING -> evaluateWordMatching(activity, safeAnswer, hintsUsed);
-            case LISTENING -> evaluateListening(activity, safeAnswer, hintsUsed);
-            case SENTENCE_TRANSFORMATION -> evaluateTransformation(activity, safeAnswer, hintsUsed);
-            case SCENARIO_CHALLENGE -> evaluateScenarioChallenge(activity, safeAnswer, hintsUsed);
+            case MULTIPLE_CHOICE -> evaluateMultipleChoice(activity, definition, safeAnswer);
+            case SENTENCE_BUILDING -> evaluateSentenceBuilding(activity, definition, safeAnswer);
+            case WORD_MATCHING -> evaluateWordMatching(activity, definition, safeAnswer);
+            case LISTENING -> evaluateListening(activity, definition, safeAnswer);
+            case SENTENCE_TRANSFORMATION -> evaluateTransformation(activity, definition, safeAnswer);
+            case SCENARIO_CHALLENGE -> evaluateScenarioChallenge(activity, definition, safeAnswer);
         };
+    }
+
+    private final AdaptiveDifficultyService adaptiveDifficultyService;
+
+    public ActivityEvaluator(AdaptiveDifficultyService adaptiveDifficultyService) {
+        this.adaptiveDifficultyService = adaptiveDifficultyService;
     }
 
     private ActivityEvaluationResult evaluateMultipleChoice(
             Activity activity,
-            Map<String, Object> submittedAnswer,
-            int hintsUsed
+            Map<String, Object> definition,
+            Map<String, Object> submittedAnswer
     ) {
-        Map<String, Object> definition = activity.getDefinitionJson();
 
         String selectedOptionId = getString(submittedAnswer, "selectedOptionId");
         String selectedAnswer = getString(submittedAnswer, "selectedAnswer");
@@ -58,17 +73,15 @@ public class ActivityEvaluator {
                 correct ? "Correct answer." : "That answer is not correct yet.",
                 correct
                         ? getStringOrDefault(definition, "feedbackCorrect", "Correct.")
-                        : getStringOrDefault(definition, "feedbackIncorrect", "Review the prompt and try again."),
-                hintsUsed
+                        : getStringOrDefault(definition, "feedbackIncorrect", "Review the prompt and try again.")
         );
     }
 
     private ActivityEvaluationResult evaluateSentenceBuilding(
             Activity activity,
-            Map<String, Object> submittedAnswer,
-            int hintsUsed
+            Map<String, Object> definition,
+            Map<String, Object> submittedAnswer
     ) {
-        Map<String, Object> definition = activity.getDefinitionJson();
 
         String correctSentence = getString(definition, "correctSentence");
         String submittedSentence = getString(submittedAnswer, "sentence");
@@ -86,18 +99,15 @@ public class ActivityEvaluator {
                 correct ? "The sentence is correct." : "The sentence order is not correct yet.",
                 correct
                         ? "You built the sentence correctly."
-                        : "Check the word order and compare it with the target sentence pattern.",
-                hintsUsed
+                        : "Check the word order and compare it with the target sentence pattern."
         );
     }
 
     private ActivityEvaluationResult evaluateWordMatching(
             Activity activity,
-            Map<String, Object> submittedAnswer,
-            int hintsUsed
+            Map<String, Object> definition,
+            Map<String, Object> submittedAnswer
     ) {
-        Map<String, Object> definition = activity.getDefinitionJson();
-
         List<Map<String, Object>> correctPairs = getListOfMaps(definition.get("pairs"));
         List<Map<String, Object>> submittedPairs = getListOfMaps(submittedAnswer.get("matches"));
 
@@ -120,7 +130,6 @@ public class ActivityEvaluator {
         evaluationJson.put("isCorrect", correct);
         evaluationJson.put("correctPairs", correctCount);
         evaluationJson.put("totalPairs", maxScore);
-        evaluationJson.put("hintsUsed", hintsUsed);
 
         return new ActivityEvaluationResult(
                 correct,
@@ -136,11 +145,9 @@ public class ActivityEvaluator {
 
     private ActivityEvaluationResult evaluateListening(
             Activity activity,
-            Map<String, Object> submittedAnswer,
-            int hintsUsed
+            Map<String, Object> definition,
+            Map<String, Object> submittedAnswer
     ) {
-        Map<String, Object> definition = activity.getDefinitionJson();
-
         String correctAnswer = getString(definition, "correctAnswer");
         String submittedText = getString(submittedAnswer, "text");
 
@@ -152,18 +159,15 @@ public class ActivityEvaluator {
                 correct ? "Correct listening answer." : "Listening answer not quite right.",
                 correct
                         ? "You understood the audio correctly."
-                        : "Try listening again. A transcript or slower audio may help.",
-                hintsUsed
+                        : "Try listening again. A transcript or slower audio may help."
         );
     }
 
     private ActivityEvaluationResult evaluateTransformation(
             Activity activity,
-            Map<String, Object> submittedAnswer,
-            int hintsUsed
+            Map<String, Object> definition,
+            Map<String, Object> submittedAnswer
     ) {
-        Map<String, Object> definition = activity.getDefinitionJson();
-
         String submittedText = getString(submittedAnswer, "text");
         String correctAnswer = getString(definition, "correctAnswer");
 
@@ -179,18 +183,15 @@ public class ActivityEvaluator {
                 correct ? "Correct transformation." : "The transformation needs review.",
                 correct
                         ? "You transformed the sentence correctly."
-                        : "Check the grammar change requested by the prompt.",
-                hintsUsed
+                        : "Check the grammar change requested by the prompt."
         );
     }
 
     private ActivityEvaluationResult evaluateScenarioChallenge(
             Activity activity,
-            Map<String, Object> submittedAnswer,
-            int hintsUsed
+            Map<String, Object> definition,
+            Map<String, Object> submittedAnswer
     ) {
-        Map<String, Object> definition = activity.getDefinitionJson();
-
         String selectedOptionId = getString(submittedAnswer, "selectedOptionId");
         String correctOptionId = getString(definition, "correctOptionId");
 
@@ -212,8 +213,7 @@ public class ActivityEvaluator {
                 correct ? "Good choice for the situation." : "That is not the best response for this situation.",
                 correct
                         ? "Your response fits the scenario."
-                        : "Think about the social context and what the speaker is trying to achieve.",
-                hintsUsed
+                        : "Think about the social context and what the speaker is trying to achieve."
         );
     }
 
@@ -221,8 +221,7 @@ public class ActivityEvaluator {
             Activity activity,
             boolean correct,
             String feedback,
-            String explanation,
-            int hintsUsed
+            String explanation
     ) {
         int maxScore = activity.getMaxScore() == null ? 1 : activity.getMaxScore();
         int score = correct ? maxScore : 0;
@@ -231,7 +230,6 @@ public class ActivityEvaluator {
         evaluationJson.put("isCorrect", correct);
         evaluationJson.put("feedback", feedback);
         evaluationJson.put("explanation", explanation);
-        evaluationJson.put("hintsUsed", hintsUsed);
 
         return new ActivityEvaluationResult(
                 correct,

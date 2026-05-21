@@ -1,6 +1,7 @@
 package com.portugease.activity;
 
 import com.portugease.common.enums.ActivityType;
+import com.portugease.common.enums.AttemptResult;
 import com.portugease.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,5 +17,11 @@ public interface ActivityAttemptRepository extends JpaRepository<ActivityAttempt
     List<ActivityAttempt> findTop10ByUserAndActivityTypeOrderByCreatedAtDesc(
             User user,
             ActivityType activityType
+    );
+
+    List<ActivityAttempt> findTop5ByUserAndActivityTypeAndResultOrderByCreatedAtDesc(
+            User user,
+            ActivityType activityType,
+            AttemptResult result
     );
 }

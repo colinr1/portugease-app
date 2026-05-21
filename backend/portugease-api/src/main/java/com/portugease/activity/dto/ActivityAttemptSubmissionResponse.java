@@ -10,7 +10,7 @@ public record ActivityAttemptSubmissionResponse(
         int maxScore,
         String feedbackMessage,
         String explanation,
-        AdaptiveSupportDecisionResponse adaptiveSupport,
+        AdaptiveDifficultyResponse adaptiveDifficulty,
         ProgressUpdateSummaryResponse progressUpdate
 ) {
 }

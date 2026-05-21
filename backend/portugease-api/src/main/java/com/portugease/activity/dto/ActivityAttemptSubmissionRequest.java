@@ -1,5 +1,6 @@
 package com.portugease.activity.dto;
 
+import com.portugease.common.enums.DifficultyLevel;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Map;
@@ -12,6 +13,7 @@ public record ActivityAttemptSubmissionRequest(
         @NotNull
         Map<String, Object> submittedAnswer,
 
-        Integer hintsUsed
+        DifficultyLevel selectedDifficulty,
+        Integer incorrectSubmissionCount
 ) {
 }

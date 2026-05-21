@@ -2,6 +2,7 @@ package com.portugease.lesson;
 
 import com.portugease.activity.Activity;
 import com.portugease.activity.ActivityRepository;
+import com.portugease.activity.AdaptiveDifficultyService;
 import com.portugease.activity.dto.ActivityContentResponse;
 import com.portugease.asset.StaticAsset;
 import com.portugease.asset.dto.AssetMetadataResponse;
@@ -34,19 +35,21 @@ public class LessonContentService {
     private final HotspotMapper hotspotMapper;
     private final DemoUserService demoUserService;
     private final LearnerLocationProgressRepository learnerLocationProgressRepository;
+    private final AdaptiveDifficultyService adaptiveDifficultyService;
 
     public LessonContentService(
             LocationRepository locationRepository,
             ActivityRepository activityRepository,
             HotspotMapper hotspotMapper,
             DemoUserService demoUserService,
-            LearnerLocationProgressRepository learnerLocationProgressRepository
+            LearnerLocationProgressRepository learnerLocationProgressRepository, AdaptiveDifficultyService adaptiveDifficultyService
     ) {
         this.locationRepository = locationRepository;
         this.activityRepository = activityRepository;
         this.hotspotMapper = hotspotMapper;
         this.demoUserService = demoUserService;
         this.learnerLocationProgressRepository = learnerLocationProgressRepository;
+        this.adaptiveDifficultyService = adaptiveDifficultyService;
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +68,7 @@ public class LessonContentService {
         );
 
         List<ActivityContentResponse> activityResponses = activities.stream()
-                .map(this::toActivityContent)
+                .map(activity -> toActivityContent(activity, demoUser))
                 .toList();
 
         IntroDialogueResponse introDialogue = extractIntroDialogue(location, demoUser);
@@ -86,7 +89,17 @@ public class LessonContentService {
         );
     }
 
-    private ActivityContentResponse toActivityContent(Activity activity) {
+    private ActivityContentResponse toActivityContent(Activity activity, User user) {
+        var selectedDifficulty = adaptiveDifficultyService.getCurrentDifficulty(
+                user,
+                activity.getActivityType()
+        );
+
+        var selectedDefinition = adaptiveDifficultyService.selectDefinition(
+                activity,
+                selectedDifficulty
+        );
+
         return new ActivityContentResponse(
                 activity.getId(),
                 activity.getLocation().getId(),
@@ -94,11 +107,12 @@ public class LessonContentService {
                 activity.getActivityType(),
                 activity.getTitle(),
                 activity.getInstructions(),
-                activity.getDefinitionJson(),
+                selectedDefinition,
                 activity.getLearningItemsJson(),
                 activity.getMaxScore(),
                 activity.getRequiredForCompletion(),
-                activity.getDisplayOrder()
+                activity.getDisplayOrder(),
+                selectedDifficulty.name()
         );
     }
 

@@ -16,6 +16,7 @@ public record ActivityContentResponse(
         Map<String, Object> learningItems,
         Integer maxScore,
         Boolean requiredForCompletion,
-        Integer displayOrder
+        Integer displayOrder,
+        String selectedDifficulty
 ) {
 }

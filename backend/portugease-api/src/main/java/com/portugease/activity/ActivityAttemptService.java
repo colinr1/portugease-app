@@ -3,12 +3,10 @@ package com.portugease.activity;
 import com.portugease.activity.dto.ActivityAttemptSubmissionRequest;
 import com.portugease.activity.dto.ActivityAttemptSubmissionResponse;
 import com.portugease.activity.dto.ActivityEvaluationResult;
-import com.portugease.activity.dto.AdaptiveSupportDecisionResponse;
+import com.portugease.activity.dto.AdaptiveDifficultyResponse;
 import com.portugease.activity.dto.ProgressUpdateSummaryResponse;
-import com.portugease.adaptive.AdaptiveEvent;
-import com.portugease.adaptive.AdaptiveEventRepository;
-import com.portugease.common.enums.AdaptiveEventType;
 import com.portugease.common.enums.AttemptResult;
+import com.portugease.common.enums.DifficultyLevel;
 import com.portugease.common.exception.ResourceNotFoundException;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
@@ -17,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ActivityAttemptService {
@@ -25,30 +26,27 @@ public class ActivityAttemptService {
     private final ActivityRepository activityRepository;
     private final ActivityAttemptRepository activityAttemptRepository;
     private final LearnerActivityProgressRepository learnerActivityProgressRepository;
-    private final AdaptiveEventRepository adaptiveEventRepository;
     private final UserRepository userRepository;
     private final DemoUserService demoUserService;
     private final ActivityEvaluator activityEvaluator;
-    private final ActivityAdaptiveSupportService adaptiveSupportService;
+    private final AdaptiveDifficultyService adaptiveDifficultyService;
 
     public ActivityAttemptService(
             ActivityRepository activityRepository,
             ActivityAttemptRepository activityAttemptRepository,
             LearnerActivityProgressRepository learnerActivityProgressRepository,
-            AdaptiveEventRepository adaptiveEventRepository,
             UserRepository userRepository,
             DemoUserService demoUserService,
             ActivityEvaluator activityEvaluator,
-            ActivityAdaptiveSupportService adaptiveSupportService
+            AdaptiveDifficultyService adaptiveDifficultyService
     ) {
         this.activityRepository = activityRepository;
         this.activityAttemptRepository = activityAttemptRepository;
         this.learnerActivityProgressRepository = learnerActivityProgressRepository;
-        this.adaptiveEventRepository = adaptiveEventRepository;
         this.userRepository = userRepository;
         this.demoUserService = demoUserService;
         this.activityEvaluator = activityEvaluator;
-        this.adaptiveSupportService = adaptiveSupportService;
+        this.adaptiveDifficultyService = adaptiveDifficultyService;
     }
 
     @Transactional
@@ -61,53 +59,39 @@ public class ActivityAttemptService {
 
         User user = resolveUser(request.userId());
 
-        int hintsUsed = request.hintsUsed() == null ? 0 : Math.max(request.hintsUsed(), 0);
+        DifficultyLevel selectedDifficulty = request.selectedDifficulty() == null
+                ? adaptiveDifficultyService.getCurrentDifficulty(user, activity.getActivityType())
+                : request.selectedDifficulty();
 
         ActivityEvaluationResult evaluation = activityEvaluator.evaluate(
                 activity,
                 request.submittedAnswer(),
-                hintsUsed
+                selectedDifficulty
         );
 
-        ActivityAttempt attempt = saveAttempt(user, activity, request, evaluation, hintsUsed);
-
-        List<ActivityAttempt> recentSimilarAttempts =
-                activityAttemptRepository.findTop10ByUserAndActivityTypeOrderByCreatedAtDesc(
-                        user,
-                        activity.getActivityType()
-                );
-
-        AdaptiveSupportDecisionResponse adaptiveDecision = adaptiveSupportService.decide(
-                activity,
-                evaluation.correct(),
-                hintsUsed,
-                false,
-                recentSimilarAttempts
-        );
-
-        saveAdaptiveEvent(
+        ActivityAttempt attempt = saveAttempt(
                 user,
                 activity,
-                attempt,
-                adaptiveDecision,
-                hintsUsed
+                request,
+                evaluation,
+                selectedDifficulty
         );
 
-        ProgressUpdateSummaryResponse progressSummary = updateActivityProgress(
+        int incorrectBeforeSuccess = request.incorrectSubmissionCount() == null
+                ? 0
+                : Math.max(request.incorrectSubmissionCount(), 0);
+
+        ProgressUpdateSummaryResponse progressUpdate = updateActivityProgress(
                 user,
                 activity,
-                evaluation
+                evaluation,
+                incorrectBeforeSuccess
         );
 
-        ProgressUpdateSummaryResponse finalProgressSummary = new ProgressUpdateSummaryResponse(
-                progressSummary.activityCompleted(),
-                progressSummary.activityMastered(),
-                progressSummary.attemptsCount(),
-                progressSummary.incorrectAttemptsCount(),
-                progressSummary.bestScore(),
-                progressSummary.maxScore(),
-                false
-        );
+        AdaptiveDifficultyService.DifficultyUpdateResult difficultyUpdate =
+                evaluation.correct()
+                        ? adaptiveDifficultyService.updateDifficultyAfterCompletedAttempt(user, activity, attempt)
+                        : AdaptiveDifficultyService.DifficultyUpdateResult.unchanged(selectedDifficulty);
 
         return new ActivityAttemptSubmissionResponse(
                 attempt.getId(),
@@ -117,8 +101,13 @@ public class ActivityAttemptService {
                 evaluation.maxScore(),
                 evaluation.feedbackMessage(),
                 evaluation.explanation(),
-                adaptiveDecision,
-                finalProgressSummary
+                new AdaptiveDifficultyResponse(
+                        selectedDifficulty.name(),
+                        difficultyUpdate.changed(),
+                        difficultyUpdate.newDifficulty().name(),
+                        difficultyUpdate.message()
+                ),
+                progressUpdate
         );
     }
 
@@ -136,12 +125,20 @@ public class ActivityAttemptService {
             Activity activity,
             ActivityAttemptSubmissionRequest request,
             ActivityEvaluationResult evaluation,
-            int hintsUsed
+            DifficultyLevel selectedDifficulty
     ) {
         long previousAttempts = activityAttemptRepository.countByUserAndActivity(user, activity);
 
+        int incorrectBeforeSuccess = request.incorrectSubmissionCount() == null
+                ? 0
+                : Math.max(request.incorrectSubmissionCount(), 0);
+
+        boolean completedPerfectly = evaluation.correct() && incorrectBeforeSuccess == 0;
+
         Map<String, Object> evaluationJson = new LinkedHashMap<>(evaluation.evaluationJson());
-        evaluationJson.put("hintsUsed", hintsUsed);
+        evaluationJson.put("selectedDifficulty", selectedDifficulty.name());
+        evaluationJson.put("incorrectBeforeSuccess", incorrectBeforeSuccess);
+        evaluationJson.put("completedPerfectly", completedPerfectly);
 
         if (request.learnerSessionId() != null) {
             evaluationJson.put("learnerSessionId", request.learnerSessionId().toString());
@@ -158,6 +155,9 @@ public class ActivityAttemptService {
         attempt.setScore(evaluation.score());
         attempt.setMaxScore(evaluation.maxScore());
         attempt.setEvaluationJson(evaluationJson);
+        attempt.setSelectedDifficulty(selectedDifficulty);
+        attempt.setIncorrectBeforeSuccess(evaluation.correct() ? incorrectBeforeSuccess : 0);
+        attempt.setCompletedPerfectly(completedPerfectly);
 
         return activityAttemptRepository.save(attempt);
     }
@@ -165,7 +165,8 @@ public class ActivityAttemptService {
     private ProgressUpdateSummaryResponse updateActivityProgress(
             User user,
             Activity activity,
-            ActivityEvaluationResult evaluation
+            ActivityEvaluationResult evaluation,
+            int incorrectBeforeSuccess
     ) {
         LearnerActivityProgress progress = learnerActivityProgressRepository
                 .findByUserAndActivity(user, activity)
@@ -218,57 +219,8 @@ public class ActivityAttemptService {
                 saved.getIncorrectAttemptsCount(),
                 saved.getBestScore(),
                 saved.getMaxScore(),
-                false
+                evaluation.correct() && incorrectBeforeSuccess == 0,
+                incorrectBeforeSuccess
         );
-    }
-
-    private void saveAdaptiveEvent(
-            User user,
-            Activity activity,
-            ActivityAttempt attempt,
-            AdaptiveSupportDecisionResponse decision,
-            int hintsUsed
-    ) {
-        AdaptiveEvent event = new AdaptiveEvent();
-        event.setUser(user);
-        event.setCity(activity.getLocation().getCity());
-        event.setLocation(activity.getLocation());
-        event.setActivity(activity);
-        event.setAttempt(attempt);
-        event.setEventType(resolveAdaptiveEventType(decision));
-        event.setMessage(String.join(" ", decision.messages()));
-
-        Map<String, Object> context = new LinkedHashMap<>();
-        context.put("scaffoldingLevel", decision.scaffoldingLevel());
-        context.put("addToReview", decision.addToReview());
-        context.put("offerTranscript", decision.offerTranscript());
-        context.put("offerSlowerAudio", decision.offerSlowerAudio());
-        context.put("reduceScaffolding", decision.reduceScaffolding());
-        context.put("hintsUsed", hintsUsed);
-        context.put("reviewItemKeys", List.of());
-
-        event.setContextJson(context);
-
-        adaptiveEventRepository.save(event);
-    }
-
-    private AdaptiveEventType resolveAdaptiveEventType(AdaptiveSupportDecisionResponse decision) {
-        if (decision.addToReview()) {
-            return AdaptiveEventType.REVIEW_RECOMMENDED;
-        }
-
-        if (decision.offerTranscript() || decision.offerSlowerAudio()) {
-            return AdaptiveEventType.EXAMPLE_SHOWN;
-        }
-
-        if (decision.reduceScaffolding()) {
-            return AdaptiveEventType.ACTIVITY_DIFFICULTY_ADJUSTED;
-        }
-
-        if ("HIGH".equalsIgnoreCase(decision.scaffoldingLevel())) {
-            return AdaptiveEventType.HINT_SHOWN;
-        }
-
-        return AdaptiveEventType.EXTRA_FEEDBACK_SHOWN;
     }
 }
