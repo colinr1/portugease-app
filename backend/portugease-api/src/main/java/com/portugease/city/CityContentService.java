@@ -12,6 +12,7 @@ import com.portugease.location.dto.LocationMenuItemResponse;
 import com.portugease.progress.LearnerCityProgressRepository;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
+import com.portugease.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,39 +26,42 @@ public class CityContentService {
     private final CityRepository cityRepository;
     private final LearnerCityProgressRepository learnerCityProgressRepository;
     private final DemoUserService demoUserService;
+    private final UserRepository userRepository;
     private final LocationContentService locationContentService;
 
     public CityContentService(
             CityRepository cityRepository,
             LearnerCityProgressRepository learnerCityProgressRepository,
             DemoUserService demoUserService,
+            UserRepository userRepository,
             LocationContentService locationContentService
     ) {
         this.cityRepository = cityRepository;
         this.learnerCityProgressRepository = learnerCityProgressRepository;
         this.demoUserService = demoUserService;
+        this.userRepository = userRepository;
         this.locationContentService = locationContentService;
     }
 
     @Transactional(readOnly = true)
-    public List<CityListItemResponse> getCities() {
-        User demoUser = demoUserService.getDemoUser();
+    public List<CityListItemResponse> getCities(UUID userId) {
+        User user = resolveUser(userId);
 
         return cityRepository.findAllByActiveTrueOrderByDisplayOrderAsc()
                 .stream()
-                .map(city -> toListItem(city, getCityStatus(demoUser, city)))
+                .map(city -> toListItem(city, getCityStatus(user, city)))
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public CityDetailResponse getCity(UUID cityId) {
-        User demoUser = demoUserService.getDemoUser();
+    public CityDetailResponse getCity(UUID cityId, UUID userId) {
+        User user = resolveUser(userId);
 
         City city = cityRepository.findById(cityId)
                 .orElseThrow(() -> new ResourceNotFoundException("City not found: " + cityId));
 
         List<LocationMenuItemResponse> locations =
-                locationContentService.getLocationMenuForCity(city.getId());
+                locationContentService.getLocationMenuForCity(city.getId(), user.getId());
 
         return new CityDetailResponse(
                 city.getId(),
@@ -67,19 +71,21 @@ public class CityContentService {
                 city.getDisplayOrder(),
                 toMarker(city.getMarkerJson()),
                 toAsset(city.getCityImageAsset()),
-                getCityStatus(demoUser, city),
+                getCityStatus(user, city),
                 city.getUnlockRuleJson(),
                 locations
         );
     }
 
     @Transactional(readOnly = true)
-    public List<LocationMenuItemResponse> getCityLocations(UUID cityId) {
+    public List<LocationMenuItemResponse> getCityLocations(UUID cityId, UUID userId) {
         if (!cityRepository.existsById(cityId)) {
             throw new ResourceNotFoundException("City not found: " + cityId);
         }
 
-        return locationContentService.getLocationMenuForCity(cityId);
+        User user = resolveUser(userId);
+
+        return locationContentService.getLocationMenuForCity(cityId, user.getId());
     }
 
     private CityListItemResponse toListItem(City city, CityStatus status) {
@@ -151,5 +157,14 @@ public class CityContentService {
         }
 
         return null;
+    }
+
+    private User resolveUser(UUID userId) {
+        if (userId == null) {
+            return demoUserService.getDemoUser();
+        }
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
     }
 }

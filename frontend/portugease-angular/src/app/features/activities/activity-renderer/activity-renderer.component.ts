@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
@@ -15,6 +15,7 @@ import { ListeningActivityComponent } from '../listening-activity/listening-acti
 import { TransformationActivityComponent } from '../transformation-activity/transformation-activity.component';
 import { FeedbackPanelComponent } from '../../../shared/components/feedback-panel/feedback-panel.component';
 import { HintPanelComponent } from '../../../shared/components/hint-panel/hint-panel.component';
+import {LearnerUserService} from "../../../core/services/learner-user.service";
 
 @Component({
   selector: 'app-activity-renderer',
@@ -35,7 +36,7 @@ import { HintPanelComponent } from '../../../shared/components/hint-panel/hint-p
   templateUrl: './activity-renderer.component.html',
   styleUrl: './activity-renderer.component.scss'
 })
-export class ActivityRendererComponent {
+export class ActivityRendererComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
 
   @Output() finished = new EventEmitter<void>();
@@ -47,7 +48,10 @@ export class ActivityRendererComponent {
   incorrectSubmissionCount = 0;
   visibleHintLevel = 0;
 
-  constructor(private readonly activityApi: ActivityApiService) {}
+  constructor(
+    private readonly activityApi: ActivityApiService,
+    private readonly learnerUserService: LearnerUserService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['activity']) {
@@ -131,7 +135,7 @@ export class ActivityRendererComponent {
     this.errorMessage = '';
 
     this.activityApi.submitAttempt(this.activity.id, {
-      userId: null,
+      userId: this.learnerUserService.selectedUserId,
       learnerSessionId: null,
       submittedAnswer,
       selectedDifficulty: this.activity.selectedDifficulty ?? 'NORMAL',

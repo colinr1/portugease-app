@@ -21,12 +21,18 @@ public class LocationController {
     }
 
     @GetMapping("/{locationId}")
-    public LocationDetailResponse getLocation(@PathVariable UUID locationId) {
-        return locationContentService.getLocation(locationId);
+    public LocationDetailResponse getLocation(
+            @PathVariable UUID locationId,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return locationContentService.getLocation(locationId, userId);
     }
 
     @GetMapping("/{locationId}/lessons")
-    public List<LessonSummaryResponse> getLocationLessons(@PathVariable UUID locationId) {
+    public List<LessonSummaryResponse> getLocationLessons(
+            @PathVariable UUID locationId,
+            @RequestParam(required = false) UUID userId
+    ) {
         return locationContentService.getLessonsForLocation(locationId);
     }
 

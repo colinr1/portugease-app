@@ -52,18 +52,18 @@ public class LocationContentService {
     }
 
     @Transactional(readOnly = true)
-    public List<LocationMenuItemResponse> getLocationMenuForCity(UUID cityId) {
-        User demoUser = demoUserService.getDemoUser();
+    public List<LocationMenuItemResponse> getLocationMenuForCity(UUID cityId, UUID userId) {
+        User user = resolveUser(userId);
 
         return locationRepository.findAllByCityIdAndActiveTrueOrderByDisplayOrderAsc(cityId)
                 .stream()
-                .map(location -> toMenuItem(location, getLocationStatus(demoUser, location)))
+                .map(location -> toMenuItem(location, getLocationStatus(user, location)))
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public LocationDetailResponse getLocation(UUID locationId) {
-        User demoUser = demoUserService.getDemoUser();
+    public LocationDetailResponse getLocation(UUID locationId, UUID userId) {
+        User user = resolveUser(userId);
 
         Location location = findLocation(locationId);
 
@@ -84,7 +84,7 @@ public class LocationContentService {
                 location.getDescription(),
                 location.getDisplayOrder(),
                 location.getEstimatedMinutes(),
-                getLocationStatus(demoUser, location),
+                getLocationStatus(user, location),
                 toAsset(location.getBackgroundAsset()),
                 location.getContentJson(),
                 hotspots,

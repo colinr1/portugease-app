@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api.config';
+import { LearnerUserService } from './learner-user.service';
 
 export interface IntroDialogueSeenRequest {
   userId?: string | null;
@@ -25,17 +26,17 @@ export type IntroDialogueSeenSource =
   providedIn: 'root'
 })
 export class LocationApiService {
-  constructor(private readonly http: HttpClient) {}
-
-
-
+  constructor(
+    private readonly http: HttpClient,
+    private readonly learnerUserService: LearnerUserService
+  ) {}
 
   markIntroDialogueSeen(
     locationId: string,
     source: IntroDialogueSeenSource | string
   ): Observable<IntroDialogueSeenResponse> {
     const request: IntroDialogueSeenRequest = {
-      userId: null,
+      userId: this.learnerUserService.selectedUserId,
       source
     };
 

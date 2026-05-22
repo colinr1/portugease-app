@@ -16,7 +16,10 @@ public class LessonController {
     }
 
     @GetMapping("/{lessonId}")
-    public LessonDetailResponse getLesson(@PathVariable UUID lessonId) {
-        return lessonContentService.getLesson(lessonId);
+    public LessonDetailResponse getLesson(
+            @PathVariable UUID lessonId,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return lessonContentService.getLesson(lessonId, userId);
     }
 }

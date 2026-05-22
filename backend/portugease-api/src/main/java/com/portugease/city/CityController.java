@@ -19,17 +19,25 @@ public class CityController {
     }
 
     @GetMapping
-    public List<CityListItemResponse> getCities() {
-        return cityContentService.getCities();
+    public List<CityListItemResponse> getCities(
+            @RequestParam(required = false) UUID userId
+    ) {
+        return cityContentService.getCities(userId);
     }
 
     @GetMapping("/{cityId}")
-    public CityDetailResponse getCity(@PathVariable UUID cityId) {
-        return cityContentService.getCity(cityId);
+    public CityDetailResponse getCity(
+            @PathVariable UUID cityId,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return cityContentService.getCity(cityId, userId);
     }
 
     @GetMapping("/{cityId}/locations")
-    public List<LocationMenuItemResponse> getCityLocations(@PathVariable UUID cityId) {
-        return cityContentService.getCityLocations(cityId);
+    public List<LocationMenuItemResponse> getCityLocations(
+            @PathVariable UUID cityId,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return cityContentService.getCityLocations(cityId, userId);
     }
 }

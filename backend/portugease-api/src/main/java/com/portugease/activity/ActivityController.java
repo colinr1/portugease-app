@@ -29,8 +29,11 @@ public class ActivityController {
     }
 
     @GetMapping("/{activityId}")
-    public ActivityContentResponse getActivity(@PathVariable UUID activityId) {
-        return activityContentService.getActivity(activityId);
+    public ActivityContentResponse getActivity(
+            @PathVariable UUID activityId,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return activityContentService.getActivity(activityId, userId);
     }
 
     @GetMapping("/by-key/{activityKey}")

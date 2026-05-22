@@ -1,5 +1,11 @@
-<app-header />
+<ng-container *ngIf="selectedUser$ | async; else userSelection">
+  <app-header />
 
-<main class="app-main">
-  <router-outlet />
-</main>
+  <main class="app-main">
+    <router-outlet />
+  </main>
+</ng-container>
+
+<ng-template #userSelection>
+  <app-user-selection-modal></app-user-selection-modal>
+</ng-template>

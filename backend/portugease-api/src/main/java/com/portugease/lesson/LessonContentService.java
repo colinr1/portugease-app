@@ -18,6 +18,7 @@ import com.portugease.location.LocationRepository;
 import com.portugease.progress.LearnerLocationProgressRepository;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
+import com.portugease.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,13 +37,16 @@ public class LessonContentService {
     private final DemoUserService demoUserService;
     private final LearnerLocationProgressRepository learnerLocationProgressRepository;
     private final AdaptiveDifficultyService adaptiveDifficultyService;
+    private final UserRepository userRepository;
 
     public LessonContentService(
             LocationRepository locationRepository,
             ActivityRepository activityRepository,
             HotspotMapper hotspotMapper,
             DemoUserService demoUserService,
-            LearnerLocationProgressRepository learnerLocationProgressRepository, AdaptiveDifficultyService adaptiveDifficultyService
+            LearnerLocationProgressRepository learnerLocationProgressRepository,
+            AdaptiveDifficultyService adaptiveDifficultyService,
+            UserRepository userRepository
     ) {
         this.locationRepository = locationRepository;
         this.activityRepository = activityRepository;
@@ -50,14 +54,15 @@ public class LessonContentService {
         this.demoUserService = demoUserService;
         this.learnerLocationProgressRepository = learnerLocationProgressRepository;
         this.adaptiveDifficultyService = adaptiveDifficultyService;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
-    public LessonDetailResponse getLesson(UUID lessonId) {
+    public LessonDetailResponse getLesson(UUID lessonId, UUID userId) {
         Location location = locationRepository.findById(lessonId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + lessonId));
 
-        User demoUser = demoUserService.getDemoUser();
+        User user = resolveUser(userId);
 
         List<Activity> activities = activityRepository
                 .findAllByLocationIdAndActiveTrueOrderByDisplayOrderAsc(location.getId());
@@ -68,10 +73,10 @@ public class LessonContentService {
         );
 
         List<ActivityContentResponse> activityResponses = activities.stream()
-                .map(activity -> toActivityContent(activity, demoUser))
+                .map(activity -> toActivityContent(activity, user))
                 .toList();
 
-        IntroDialogueResponse introDialogue = extractIntroDialogue(location, demoUser);
+        IntroDialogueResponse introDialogue = extractIntroDialogue(location, user);
 
         return new LessonDetailResponse(
                 location.getId(),
@@ -87,6 +92,15 @@ public class LessonContentService {
                 activityResponses,
                 introDialogue
         );
+    }
+
+    private User resolveUser(UUID userId) {
+        if (userId == null) {
+            return demoUserService.getDemoUser();
+        }
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
     }
 
     private ActivityContentResponse toActivityContent(Activity activity, User user) {
