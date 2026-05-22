@@ -38,6 +38,7 @@ import {LearnerUserService} from "../../../core/services/learner-user.service";
 })
 export class ActivityRendererComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
+  @Input() locationName = 'Scenario';
 
   @Output() finished = new EventEmitter<void>();
 
@@ -211,4 +212,6 @@ export class ActivityRendererComponent implements OnChanges {
         return 'MULTIPLE_CHOICE';
     }
   }
+
+  protected readonly location = location;
 }

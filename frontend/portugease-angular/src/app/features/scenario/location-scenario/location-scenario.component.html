@@ -28,6 +28,7 @@
       <app-scenario-interaction-modal
         *ngIf="selectedActivity && selectedHotspot"
         [activity]="selectedActivity"
+        [locationName]="lesson.title"
         [hotspot]="selectedHotspot"
         (closed)="closeNormalModal()"
       ></app-scenario-interaction-modal>
@@ -47,6 +48,7 @@
       *ngIf="selectedActivity && selectedHotspot"
       class="below-image-modal"
       [activity]="selectedActivity"
+      [locationName]="lesson.title"
       [hotspot]="selectedHotspot"
       (closed)="closeNormalModal()"
     ></app-scenario-interaction-modal>

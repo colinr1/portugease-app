@@ -26,6 +26,7 @@ import { ActivityRendererComponent } from '../../activities/activity-renderer/ac
 export class ScenarioInteractionModalComponent implements AfterViewInit {
   @Input() activity?: ActivityContent;
   @Input({ required: true }) hotspot!: Hotspot;
+  @Input() locationName = 'Scenario';
 
   @Output() closed = new EventEmitter<void>();
 

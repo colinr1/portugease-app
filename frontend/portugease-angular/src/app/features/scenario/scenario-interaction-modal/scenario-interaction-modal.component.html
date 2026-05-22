@@ -18,6 +18,7 @@
     <app-activity-renderer
       *ngIf="activity"
       [activity]="activity"
+      [locationName]="locationName"
       (finished)="close()"
     ></app-activity-renderer>
 
