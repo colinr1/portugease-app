@@ -11,6 +11,11 @@ import { ImageSceneComponent } from '../image-scene/image-scene.component';
 import { ScenarioInteractionModalComponent } from '../scenario-interaction-modal/scenario-interaction-modal.component';
 import { IntroDialogueModalComponent } from '../intro-dialogue-modal/intro-dialogue-modal.component';
 import { BeachTaskTrayComponent } from '../beach-task-tray/beach-task-tray.component';
+import {
+  isActivityHotspot,
+  isIntroDialogueHotspot,
+  isVocabularyTooltipHotspot
+} from '../../../core/utils/hotspot.util';
 
 @Component({
   selector: 'app-location-scenario',
@@ -41,7 +46,7 @@ export class LocationScenarioComponent implements OnChanges {
   }
 
   get sceneHotspots(): Hotspot[] {
-    return this.lesson.hotspots.filter(hotspot => !this.isActivityHotspot(hotspot));
+    return this.lesson.hotspots.filter(hotspot => !isActivityHotspot(hotspot));
   }
 
   get visibleSceneHotspots(): Hotspot[] {
@@ -66,11 +71,11 @@ export class LocationScenarioComponent implements OnChanges {
   }
 
   onHotspotSelected(hotspot: Hotspot): void {
-    if (this.isVocabularyTooltipHotspot(hotspot)) {
+    if (isVocabularyTooltipHotspot(hotspot)) {
       return;
     }
 
-    if (this.isIntroDialogueHotspot(hotspot)) {
+    if (isIntroDialogueHotspot(hotspot, this.lesson.introDialogue?.id)) {
       this.openIntroDialogueFromHotspot();
       return;
     }
@@ -220,31 +225,5 @@ export class LocationScenarioComponent implements OnChanges {
       style: 'ACTIVITY',
       ariaLabel: `Open ${activity.title} activity`
     };
-  }
-
-  private isActivityHotspot(hotspot: Hotspot): boolean {
-    return (
-      hotspot.hotspotType === 'ACTIVITY' ||
-      hotspot.style === 'ACTIVITY' ||
-      Boolean(hotspot.activityId) ||
-      Boolean(hotspot.activityKey)
-    );
-  }
-
-  private isIntroDialogueHotspot(hotspot: Hotspot): boolean {
-    return (
-      hotspot.hotspotType === 'INTRO_DIALOGUE' ||
-      hotspot.style === 'INTRO_DIALOGUE' ||
-      hotspot.dialogueId === this.lesson.introDialogue?.id
-    );
-  }
-
-  private isVocabularyTooltipHotspot(hotspot: Hotspot): boolean {
-    return (
-      hotspot.hotspotType === 'VOCAB_TOOLTIP' ||
-      hotspot.style === 'VOCAB_TOOLTIP' ||
-      hotspot.raw?.['hotspotType'] === 'VOCAB_TOOLTIP' ||
-      hotspot.raw?.['style'] === 'VOCAB_TOOLTIP'
-    );
   }
 }

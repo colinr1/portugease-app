@@ -3,7 +3,11 @@ package com.portugease.city;
 import com.portugease.city.dto.CityDetailResponse;
 import com.portugease.city.dto.CityListItemResponse;
 import com.portugease.location.dto.LocationMenuItemResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;

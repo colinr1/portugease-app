@@ -1,7 +1,6 @@
 package com.portugease.activity;
 
 import com.portugease.common.enums.ActivityType;
-import com.portugease.common.enums.AdaptiveEventType;
 import com.portugease.common.enums.AttemptResult;
 import com.portugease.common.enums.DifficultyLevel;
 import com.portugease.user.User;
@@ -61,16 +60,19 @@ public class AdaptiveDifficultyService {
         }
 
         LearnerActivityTypeDifficulty state = findOrCreateState(user, activity.getActivityType());
+        DifficultyLevel currentDifficulty = state.getCurrentDifficulty();
 
         List<ActivityAttempt> recentCompletions =
-                activityAttemptRepository.findTop5ByUserAndActivityTypeAndResultOrderByCreatedAtDesc(
+                activityAttemptRepository.findTop5ByUserAndActivityTypeAndResultAndSelectedDifficultyAndCreatedAtAfterOrderByCreatedAtDesc(
                         user,
                         activity.getActivityType(),
-                        AttemptResult.CORRECT
+                        AttemptResult.CORRECT,
+                        currentDifficulty,
+                        state.getUpdatedAt()
                 );
 
         if (recentCompletions.size() < 5) {
-            return DifficultyUpdateResult.unchanged(state.getCurrentDifficulty());
+            return DifficultyUpdateResult.unchanged(currentDifficulty);
         }
 
         long perfectCount = recentCompletions.stream()
@@ -79,7 +81,7 @@ public class AdaptiveDifficultyService {
 
         long mistakeCount = recentCompletions.size() - perfectCount;
 
-        DifficultyLevel before = state.getCurrentDifficulty();
+        DifficultyLevel before = currentDifficulty;
         DifficultyLevel after = before;
 
         if (perfectCount == 5) {

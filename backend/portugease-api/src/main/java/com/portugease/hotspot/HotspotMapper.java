@@ -1,12 +1,12 @@
 package com.portugease.hotspot;
 
 import com.portugease.activity.Activity;
+import com.portugease.common.json.JsonValueReader;
 import com.portugease.hotspot.dto.HotspotResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,29 +35,12 @@ public class HotspotMapper {
                 .toList();
     }
 
-    @SuppressWarnings("unchecked")
     private List<Map<String, Object>> extractHotspotMaps(Map<String, Object> contentJson) {
-        Object hotspots = contentJson.get("hotspots");
-
-        if (!(hotspots instanceof List<?> hotspotList)) {
-            return List.of();
-        }
-
-        return hotspotList.stream()
-                .filter(Map.class::isInstance)
-                .map(item -> (Map<String, Object>) item)
-                .toList();
+        return JsonValueReader.asMapList(contentJson.get("hotspots"));
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, Object> getMap(Map<String, Object> source, String key) {
-        Object value = source.get(key);
-
-        if (value instanceof Map<?, ?> mapValue) {
-            return (Map<String, Object>) mapValue;
-        }
-
-        return null;
+        return JsonValueReader.getMap(source, key);
     }
 
     private HotspotResponse toResponse(
@@ -90,39 +73,14 @@ public class HotspotMapper {
     }
 
     private String getString(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        return value == null ? null : value.toString();
+        return JsonValueReader.getString(map, key);
     }
 
     private Double getDouble(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-
-        if (value instanceof Number number) {
-            return number.doubleValue();
-        }
-
-        if (value instanceof String stringValue && !stringValue.isBlank()) {
-            try {
-                return Double.parseDouble(stringValue);
-            } catch (NumberFormatException exception) {
-                return null;
-            }
-        }
-
-        return null;
+        return JsonValueReader.getDouble(map, key);
     }
 
     private Boolean getBooleanOrDefault(Map<String, Object> map, String key, boolean defaultValue) {
-        Object value = map.get(key);
-
-        if (value instanceof Boolean booleanValue) {
-            return booleanValue;
-        }
-
-        if (Objects.isNull(value)) {
-            return defaultValue;
-        }
-
-        return Boolean.parseBoolean(value.toString());
+        return JsonValueReader.getBooleanOrDefault(map, key, defaultValue);
     }
 }

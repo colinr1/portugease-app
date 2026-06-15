@@ -1,7 +1,9 @@
 package com.portugease.progress;
 
 import com.portugease.progress.dto.ProgressResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/progress")

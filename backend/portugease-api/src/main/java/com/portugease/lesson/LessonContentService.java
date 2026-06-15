@@ -4,9 +4,11 @@ import com.portugease.activity.Activity;
 import com.portugease.activity.ActivityRepository;
 import com.portugease.activity.AdaptiveDifficultyService;
 import com.portugease.activity.dto.ActivityContentResponse;
+import com.portugease.asset.AssetResponseMapper;
 import com.portugease.asset.StaticAsset;
 import com.portugease.asset.dto.AssetMetadataResponse;
 import com.portugease.common.exception.ResourceNotFoundException;
+import com.portugease.common.json.JsonValueReader;
 import com.portugease.hotspot.HotspotMapper;
 import com.portugease.hotspot.dto.HotspotResponse;
 import com.portugease.lesson.dto.IntroDialogueFocusMarkerResponse;
@@ -23,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -161,7 +162,7 @@ public class LessonContentService {
 
     private List<IntroDialogueLineResponse> extractDialogueLines(Object linesObject) {
         if (!(linesObject instanceof List<?> rawLines)) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         List<IntroDialogueLineResponse> lines = new ArrayList<>();
@@ -187,7 +188,7 @@ public class LessonContentService {
 
     private List<IntroDialogueFocusMarkerResponse> extractFocusMarkers(Object focusMarkersObject) {
         if (!(focusMarkersObject instanceof List<?> rawFocusMarkers)) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         List<IntroDialogueFocusMarkerResponse> focusMarkers = new ArrayList<>();
@@ -209,19 +210,7 @@ public class LessonContentService {
     }
 
     private Double valueAsDouble(Object value) {
-        if (value instanceof Number numberValue) {
-            return numberValue.doubleValue();
-        }
-
-        if (value == null) {
-            return null;
-        }
-
-        try {
-            return Double.parseDouble(value.toString());
-        } catch (NumberFormatException exception) {
-            return null;
-        }
+        return JsonValueReader.asDouble(value);
     }
 
     private String getLessonTitle(Location location) {
@@ -236,45 +225,18 @@ public class LessonContentService {
     }
 
     private AssetMetadataResponse toAsset(StaticAsset asset) {
-        if (asset == null) {
-            return null;
-        }
-
-        return new AssetMetadataResponse(
-                asset.getId(),
-                asset.getAssetKey(),
-                asset.getAssetType(),
-                asset.getFilePath(),
-                asset.getAltText(),
-                asset.getDescription(),
-                asset.getMimeType()
-        );
+        return AssetResponseMapper.toMetadataResponse(asset);
     }
 
     private String valueAsString(Object value) {
-        return value == null ? null : value.toString();
+        return JsonValueReader.asString(value);
     }
 
     private Boolean valueAsBoolean(Object value) {
-        if (value instanceof Boolean booleanValue) {
-            return booleanValue;
-        }
-
-        if (value == null) {
-            return false;
-        }
-
-        return Boolean.parseBoolean(value.toString());
+        return JsonValueReader.asBoolean(value);
     }
 
     private List<String> valueAsStringList(Object value) {
-        if (!(value instanceof List<?> rawList)) {
-            return Collections.emptyList();
-        }
-
-        return rawList.stream()
-                .filter(item -> item != null)
-                .map(Object::toString)
-                .toList();
+        return JsonValueReader.asStringList(value);
     }
 }

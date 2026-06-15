@@ -8,6 +8,10 @@ import {
 } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Hotspot, VocabularyTooltipContent } from '../../../core/models/hotspot.model';
+import {
+  isIntroDialogueHotspot,
+  isVocabularyTooltipHotspot
+} from '../../../core/utils/hotspot.util';
 
 @Component({
   selector: 'app-hotspot-marker',
@@ -34,21 +38,11 @@ export class HotspotMarkerComponent {
   }
 
   get isIntroDialogue(): boolean {
-    return (
-      this.hotspot.hotspotType === 'INTRO_DIALOGUE' ||
-      this.hotspot.style === 'INTRO_DIALOGUE' ||
-      this.hotspot.raw?.['hotspotType'] === 'INTRO_DIALOGUE' ||
-      this.hotspot.raw?.['style'] === 'INTRO_DIALOGUE'
-    );
+    return isIntroDialogueHotspot(this.hotspot);
   }
 
   get isVocabularyTooltip(): boolean {
-    return (
-      this.hotspot.hotspotType === 'VOCAB_TOOLTIP' ||
-      this.hotspot.style === 'VOCAB_TOOLTIP' ||
-      this.hotspot.raw?.['hotspotType'] === 'VOCAB_TOOLTIP' ||
-      this.hotspot.raw?.['style'] === 'VOCAB_TOOLTIP'
-    );
+    return isVocabularyTooltipHotspot(this.hotspot);
   }
 
   get vocabulary(): VocabularyTooltipContent | null {

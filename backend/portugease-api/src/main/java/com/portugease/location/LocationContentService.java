@@ -2,10 +2,12 @@ package com.portugease.location;
 
 import com.portugease.activity.Activity;
 import com.portugease.activity.ActivityRepository;
+import com.portugease.asset.AssetResponseMapper;
 import com.portugease.asset.StaticAsset;
 import com.portugease.asset.dto.AssetMetadataResponse;
 import com.portugease.common.enums.LocationStatus;
 import com.portugease.common.exception.ResourceNotFoundException;
+import com.portugease.common.json.JsonValueReader;
 import com.portugease.hotspot.HotspotMapper;
 import com.portugease.hotspot.dto.HotspotResponse;
 import com.portugease.lesson.dto.LessonSummaryResponse;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -220,23 +223,17 @@ public class LocationContentService {
     }
 
     private String getLessonTitle(Location location) {
-        Object title = location.getContentJson().get("title");
-        return title == null ? location.getName() : title.toString();
+        Map<String, Object> contentJson = location.getContentJson();
+
+        if (contentJson == null) {
+            return location.getName();
+        }
+
+        String title = JsonValueReader.getString(contentJson, "title");
+        return title == null ? location.getName() : title;
     }
 
     private AssetMetadataResponse toAsset(StaticAsset asset) {
-        if (asset == null) {
-            return null;
-        }
-
-        return new AssetMetadataResponse(
-                asset.getId(),
-                asset.getAssetKey(),
-                asset.getAssetType(),
-                asset.getFilePath(),
-                asset.getAltText(),
-                asset.getDescription(),
-                asset.getMimeType()
-        );
+        return AssetResponseMapper.toMetadataResponse(asset);
     }
 }

@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
-  ActivityContent, ActivityHint,
+  ActivityContent,
+  ActivityHint,
   NormalizedActivityType
 } from '../../../core/models/activity.model';
 import { ActivityAttemptResponse } from '../../../core/models/attempt.model';
@@ -15,7 +16,11 @@ import { ListeningActivityComponent } from '../listening-activity/listening-acti
 import { TransformationActivityComponent } from '../transformation-activity/transformation-activity.component';
 import { FeedbackPanelComponent } from '../../../shared/components/feedback-panel/feedback-panel.component';
 import { HintPanelComponent } from '../../../shared/components/hint-panel/hint-panel.component';
-import {LearnerUserService} from "../../../core/services/learner-user.service";
+import { LearnerUserService } from '../../../core/services/learner-user.service';
+import {
+  extractActivityHints,
+  normalizeActivityType
+} from '../../../core/utils/activity-definition.util';
 
 @Component({
   selector: 'app-activity-renderer',
@@ -61,58 +66,11 @@ export class ActivityRendererComponent implements OnChanges {
   }
 
   get activityType(): NormalizedActivityType {
-    return this.normalizeActivityType(this.activity.activityType);
+    return normalizeActivityType(this.activity.activityType);
   }
 
   get hints(): ActivityHint[] {
-    const definition = this.activity.definition ?? {};
-    const rawHints = definition['hints'];
-
-    if (Array.isArray(rawHints)) {
-      return rawHints
-        .map((hint, index) => {
-          if (typeof hint === 'string') {
-            return {
-              level: index + 1,
-              text: hint
-            };
-          }
-
-          if (hint && typeof hint === 'object') {
-            const hintObject = hint as Record<string, unknown>;
-
-            return {
-              level: Number(hintObject['level'] ?? index + 1),
-              text: String(hintObject['text'] ?? '')
-            };
-          }
-
-          return null;
-        })
-        .filter((hint): hint is ActivityHint => !!hint && hint.text.trim().length > 0)
-        .sort((a, b) => a.level - b.level);
-    }
-
-    const fallbackHints: ActivityHint[] = [];
-
-    const hint1 = definition['hint'];
-    const hint2 = definition['hint2'] ?? definition['secondHint'];
-
-    if (hint1 != null && String(hint1).trim().length > 0) {
-      fallbackHints.push({
-        level: 1,
-        text: String(hint1)
-      });
-    }
-
-    if (hint2 != null && String(hint2).trim().length > 0) {
-      fallbackHints.push({
-        level: 2,
-        text: String(hint2)
-      });
-    }
-
-    return fallbackHints;
+    return extractActivityHints(this.activity.definition ?? {});
   }
 
   get hasHints(): boolean {
@@ -146,8 +104,9 @@ export class ActivityRendererComponent implements OnChanges {
         this.feedback = response;
 
         if (!response.isCorrect) {
-          this.registerIncorrectSubmission()
+          this.registerIncorrectSubmission();
         }
+
         this.submitting = false;
       },
       error: () => {
@@ -184,34 +143,4 @@ export class ActivityRendererComponent implements OnChanges {
     this.incorrectSubmissionCount = 0;
     this.visibleHintLevel = 0;
   }
-
-  private normalizeActivityType(type: string): NormalizedActivityType {
-    const normalized = type.trim().toUpperCase();
-
-    switch (normalized) {
-      case 'MULTIPLE_CHOICE':
-        return 'MULTIPLE_CHOICE';
-
-      case 'WORD_MATCHING':
-        return 'WORD_MATCHING';
-
-      case 'SENTENCE_BUILDING':
-        return 'SENTENCE_BUILDING';
-
-      case 'LISTENING':
-        return 'LISTENING';
-
-      case 'TRANSFORMATION':
-      case 'SENTENCE_TRANSFORMATION':
-        return 'SENTENCE_TRANSFORMATION';
-
-      case 'SCENARIO_CHALLENGE':
-        return 'SCENARIO_CHALLENGE';
-
-      default:
-        return 'MULTIPLE_CHOICE';
-    }
-  }
-
-  protected readonly location = location;
 }

@@ -1,5 +1,6 @@
 package com.portugease.city;
 
+import com.portugease.asset.AssetResponseMapper;
 import com.portugease.asset.StaticAsset;
 import com.portugease.asset.dto.AssetMetadataResponse;
 import com.portugease.city.dto.CityDetailResponse;
@@ -7,6 +8,7 @@ import com.portugease.city.dto.CityListItemResponse;
 import com.portugease.city.dto.CityMarkerResponse;
 import com.portugease.common.enums.CityStatus;
 import com.portugease.common.exception.ResourceNotFoundException;
+import com.portugease.common.json.JsonValueReader;
 import com.portugease.location.LocationContentService;
 import com.portugease.location.dto.LocationMenuItemResponse;
 import com.portugease.progress.LearnerCityProgressRepository;
@@ -121,42 +123,15 @@ public class CityContentService {
     }
 
     private AssetMetadataResponse toAsset(StaticAsset asset) {
-        if (asset == null) {
-            return null;
-        }
-
-        return new AssetMetadataResponse(
-                asset.getId(),
-                asset.getAssetKey(),
-                asset.getAssetType(),
-                asset.getFilePath(),
-                asset.getAltText(),
-                asset.getDescription(),
-                asset.getMimeType()
-        );
+        return AssetResponseMapper.toMetadataResponse(asset);
     }
 
     private String getString(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        return value == null ? null : value.toString();
+        return JsonValueReader.getString(map, key);
     }
 
     private Double getDouble(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-
-        if (value instanceof Number number) {
-            return number.doubleValue();
-        }
-
-        if (value instanceof String stringValue && !stringValue.isBlank()) {
-            try {
-                return Double.parseDouble(stringValue);
-            } catch (NumberFormatException exception) {
-                return null;
-            }
-        }
-
-        return null;
+        return JsonValueReader.getDouble(map, key);
     }
 
     private User resolveUser(UUID userId) {

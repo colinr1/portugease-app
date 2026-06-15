@@ -2,9 +2,11 @@ package com.portugease.activity;
 
 import com.portugease.common.enums.ActivityType;
 import com.portugease.common.enums.AttemptResult;
+import com.portugease.common.enums.DifficultyLevel;
 import com.portugease.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,5 +25,13 @@ public interface ActivityAttemptRepository extends JpaRepository<ActivityAttempt
             User user,
             ActivityType activityType,
             AttemptResult result
+    );
+
+    List<ActivityAttempt> findTop5ByUserAndActivityTypeAndResultAndSelectedDifficultyAndCreatedAtAfterOrderByCreatedAtDesc(
+            User user,
+            ActivityType activityType,
+            AttemptResult result,
+            DifficultyLevel selectedDifficulty,
+            OffsetDateTime createdAt
     );
 }

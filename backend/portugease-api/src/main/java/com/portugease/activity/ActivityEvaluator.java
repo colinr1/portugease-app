@@ -2,13 +2,26 @@ package com.portugease.activity;
 
 import com.portugease.activity.dto.ActivityEvaluationResult;
 import com.portugease.common.enums.DifficultyLevel;
+import com.portugease.common.json.JsonValueReader;
 import org.springframework.stereotype.Component;
 
 import java.text.Normalizer;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Component
 public class ActivityEvaluator {
+
+    private final AdaptiveDifficultyService adaptiveDifficultyService;
+
+    public ActivityEvaluator(AdaptiveDifficultyService adaptiveDifficultyService) {
+        this.adaptiveDifficultyService = adaptiveDifficultyService;
+    }
 
     public ActivityEvaluationResult evaluate(
             Activity activity,
@@ -36,12 +49,6 @@ public class ActivityEvaluator {
             case SENTENCE_TRANSFORMATION -> evaluateTransformation(activity, definition, safeAnswer);
             case SCENARIO_CHALLENGE -> evaluateScenarioChallenge(activity, definition, safeAnswer);
         };
-    }
-
-    private final AdaptiveDifficultyService adaptiveDifficultyService;
-
-    public ActivityEvaluator(AdaptiveDifficultyService adaptiveDifficultyService) {
-        this.adaptiveDifficultyService = adaptiveDifficultyService;
     }
 
     private ActivityEvaluationResult evaluateMultipleChoice(
@@ -264,35 +271,18 @@ public class ActivityEvaluator {
     }
 
     private String getString(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        return value == null ? null : value.toString();
+        return JsonValueReader.getString(map, key);
     }
 
     private String getStringOrDefault(Map<String, Object> map, String key, String fallback) {
-        String value = getString(map, key);
-        return value == null || value.isBlank() ? fallback : value;
+        return JsonValueReader.getStringOrDefault(map, key, fallback);
     }
 
-    @SuppressWarnings("unchecked")
     private List<Map<String, Object>> getListOfMaps(Object value) {
-        if (!(value instanceof List<?> list)) {
-            return List.of();
-        }
-
-        return list.stream()
-                .filter(Map.class::isInstance)
-                .map(item -> (Map<String, Object>) item)
-                .toList();
+        return JsonValueReader.asMapList(value);
     }
 
     private List<String> getListOfStrings(Object value) {
-        if (!(value instanceof List<?> list)) {
-            return List.of();
-        }
-
-        return list.stream()
-                .filter(Objects::nonNull)
-                .map(Object::toString)
-                .toList();
+        return JsonValueReader.asStringList(value);
     }
 }
