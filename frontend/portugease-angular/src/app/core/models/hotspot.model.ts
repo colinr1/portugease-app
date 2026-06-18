@@ -27,6 +27,7 @@ export interface VocabularyTooltipContent {
   itemKey: string;
   portugueseText: string;
   englishTranslation: string;
+  audioPath?: string | null;
 }
 
 export interface Hotspot {

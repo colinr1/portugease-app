@@ -12,6 +12,7 @@ import {
   isIntroDialogueHotspot,
   isVocabularyTooltipHotspot
 } from '../../../core/utils/hotspot.util';
+import { PortugueseAudioService } from '../../../core/services/portuguese-audio.service';
 
 @Component({
   selector: 'app-hotspot-marker',
@@ -28,7 +29,10 @@ export class HotspotMarkerComponent {
   tooltipOpen = false;
   private pointerActivating = false;
 
-  constructor(private readonly elementRef: ElementRef<HTMLElement>) {}
+  constructor(
+    private readonly elementRef: ElementRef<HTMLElement>,
+    private readonly portugueseAudio: PortugueseAudioService
+  ) {}
 
   get markerStyle(): Record<string, string> {
     return {
@@ -114,6 +118,7 @@ export class HotspotMarkerComponent {
       event.stopPropagation();
       this.tooltipOpen = !this.tooltipOpen;
       this.pointerActivating = false;
+      this.playVocabularyAudio();
       return;
     }
 
@@ -163,5 +168,23 @@ export class HotspotMarkerComponent {
       typeof candidate.portugueseText === 'string' &&
       typeof candidate.englishTranslation === 'string'
     );
+  }
+
+  private playVocabularyAudio(): void {
+    const vocabulary = this.vocabulary;
+
+    if (!vocabulary) {
+      return;
+    }
+
+    this.portugueseAudio.playVocabulary(vocabulary, this.hotspotAudioSource);
+  }
+
+  private get hotspotAudioSource(): string | null {
+    const audioSource =
+      this.hotspot.raw?.['audioPath'] ??
+      null;
+
+    return typeof audioSource === 'string' ? audioSource : null;
   }
 }

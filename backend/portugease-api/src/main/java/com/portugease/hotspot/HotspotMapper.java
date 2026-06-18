@@ -5,6 +5,7 @@ import com.portugease.common.json.JsonValueReader;
 import com.portugease.hotspot.dto.HotspotResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,6 +50,7 @@ public class HotspotMapper {
     ) {
         String activityKey = getString(rawHotspot, "activityKey");
         Activity activity = activityKey == null ? null : activitiesByKey.get(activityKey);
+        Map<String, Object> vocabulary = mapVocabulary(rawHotspot);
 
         return new HotspotResponse(
                 getString(rawHotspot, "id"),
@@ -66,10 +68,86 @@ public class HotspotMapper {
                 getString(rawHotspot, "dialogueId"),
                 getString(rawHotspot, "ariaLabel"),
 
-                getMap(rawHotspot, "vocabulary"),
+                vocabulary,
 
-                rawHotspot
+                mapRawHotspot(rawHotspot, vocabulary)
         );
+    }
+
+    private Map<String, Object> mapVocabulary(Map<String, Object> rawHotspot) {
+        Map<String, Object> vocabulary = getMap(rawHotspot, "vocabulary");
+
+        if (vocabulary == null) {
+            return null;
+        }
+
+        Map<String, Object> mappedVocabulary = new LinkedHashMap<>(vocabulary);
+        normalizeAudioReference(mappedVocabulary, "audioPath");
+        copyAudioReferenceIfMissing(rawHotspot, mappedVocabulary, "audioPath");
+
+        return mappedVocabulary;
+    }
+
+    private Map<String, Object> mapRawHotspot(
+            Map<String, Object> rawHotspot,
+            Map<String, Object> vocabulary
+    ) {
+        Map<String, Object> mappedRawHotspot = new LinkedHashMap<>(rawHotspot);
+        normalizeAudioReference(mappedRawHotspot, "audioPath");
+
+        if (vocabulary != null) {
+            mappedRawHotspot.put("vocabulary", vocabulary);
+        }
+
+        return mappedRawHotspot;
+    }
+
+    private void normalizeAudioReference(Map<String, Object> source, String key) {
+        if (!source.containsKey(key)) {
+            return;
+        }
+
+        String audioReference = frontendAudioReference(source.get(key));
+        if (audioReference == null) {
+            source.remove(key);
+            return;
+        }
+
+        source.put(key, audioReference);
+    }
+
+    private void copyAudioReferenceIfMissing(
+            Map<String, Object> rawHotspot,
+            Map<String, Object> vocabulary,
+            String key
+    ) {
+        if (vocabulary.containsKey(key)) {
+            return;
+        }
+
+        String audioReference = frontendAudioReference(rawHotspot.get(key));
+        if (audioReference != null) {
+            vocabulary.put(key, audioReference);
+        }
+    }
+
+    private String frontendAudioReference(Object value) {
+        String audioReference = JsonValueReader.asString(value);
+
+        if (audioReference == null || audioReference.isBlank()) {
+            return null;
+        }
+
+        String trimmedReference = audioReference.trim();
+
+        if (trimmedReference.startsWith("/assets/")
+                || trimmedReference.startsWith("assets/")
+                || trimmedReference.startsWith("https://")
+                || trimmedReference.startsWith("http://")) {
+            return trimmedReference;
+        }
+
+        return null;
     }
 
     private String getString(Map<String, Object> map, String key) {

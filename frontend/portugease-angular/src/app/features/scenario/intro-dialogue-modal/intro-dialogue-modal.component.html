@@ -19,7 +19,7 @@
         <button
           type="button"
           class="audio-button"
-          *ngIf="currentLine?.audioPath"
+          *ngIf="currentLine?.portugueseText"
           [attr.aria-label]="playAudioLabel"
           (click)="playCurrentAudio()"
         >
@@ -64,16 +64,6 @@
         </p>
       </div>
 
-      <audio
-        #lineAudio
-        *ngIf="currentLine.audioPath"
-        [src]="currentLine.audioPath"
-        preload="auto"
-      ></audio>
-
-      <p *ngIf="audioAutoplayBlocked" class="audio-warning">
-        Audio could not start automatically. Use Play audio to listen.
-      </p>
     </section>
 
     <ng-template #emptyDialogue>

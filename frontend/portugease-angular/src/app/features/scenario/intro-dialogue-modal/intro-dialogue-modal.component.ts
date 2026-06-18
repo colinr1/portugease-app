@@ -5,11 +5,13 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
   Output,
   ViewChild
 } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { IntroDialogue, IntroDialogueLine } from '../../../core/models/lesson.model';
+import { PortugueseAudioService } from '../../../core/services/portuguese-audio.service';
 
 @Component({
   selector: 'app-intro-dialogue-modal',
@@ -18,7 +20,7 @@ import { IntroDialogue, IntroDialogueLine } from '../../../core/models/lesson.mo
   templateUrl: './intro-dialogue-modal.component.html',
   styleUrl: './intro-dialogue-modal.component.scss'
 })
-export class IntroDialogueModalComponent implements AfterViewInit {
+export class IntroDialogueModalComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) dialogue!: IntroDialogue;
 
   @Output() closed = new EventEmitter<void>();
@@ -26,10 +28,10 @@ export class IntroDialogueModalComponent implements AfterViewInit {
   @Output() lineChanged = new EventEmitter<IntroDialogueLine | null>();
 
   @ViewChild('closeButton') closeButton?: ElementRef<HTMLButtonElement>;
-  @ViewChild('lineAudio') lineAudio?: ElementRef<HTMLAudioElement>;
 
   currentLineIndex = 0;
-  audioAutoplayBlocked = false;
+
+  constructor(private readonly portugueseAudio: PortugueseAudioService) {}
 
   ngAfterViewInit(): void {
     queueMicrotask(() => {
@@ -81,23 +83,18 @@ export class IntroDialogueModalComponent implements AfterViewInit {
   }
 
   playCurrentAudio(): void {
-    const audio = this.lineAudio?.nativeElement;
+    const currentLine = this.currentLine;
 
-    if (!audio || !this.currentLine?.audioPath) {
+    if (!currentLine) {
       return;
     }
 
-    this.audioAutoplayBlocked = false;
-
-    audio.pause();
-    audio.currentTime = 0;
-
-    audio.play().catch(() => {
-      this.audioAutoplayBlocked = true;
-    });
+    this.portugueseAudio.playText(currentLine.portugueseText, currentLine.audioPath);
   }
 
   goNext(): void {
+    this.stopCurrentPlayback();
+
     if (this.isFinalLine) {
       this.lineChanged.emit(null)
       this.finished.emit();
@@ -105,7 +102,6 @@ export class IntroDialogueModalComponent implements AfterViewInit {
     }
 
     this.currentLineIndex++;
-    this.audioAutoplayBlocked = false;
     this.emitCurrentLine();
 
     setTimeout(() => {
@@ -114,8 +110,13 @@ export class IntroDialogueModalComponent implements AfterViewInit {
   }
 
   close(): void {
+    this.stopCurrentPlayback();
     this.lineChanged.emit(null);
     this.closed.emit();
+  }
+
+  ngOnDestroy(): void {
+    this.stopCurrentPlayback();
   }
 
   stopBackdropClick(event: MouseEvent): void {
@@ -124,6 +125,10 @@ export class IntroDialogueModalComponent implements AfterViewInit {
 
   private emitCurrentLine(): void {
     this.lineChanged.emit(this.currentLine);
+  }
+
+  private stopCurrentPlayback(): void {
+    this.portugueseAudio.stop();
   }
 
   @HostListener('document:keydown.escape')
