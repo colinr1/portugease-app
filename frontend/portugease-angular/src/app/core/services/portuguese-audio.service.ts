@@ -7,6 +7,7 @@ import { VocabularyTooltipContent } from '../models/hotspot.model';
 export class PortugueseAudioService implements OnDestroy {
   private currentAudio?: HTMLAudioElement;
   private readonly unavailableAudioSources = new Set<string>();
+  private playbackRequestId = 0;
 
   playVocabulary(
     vocabulary: VocabularyTooltipContent,
@@ -20,12 +21,11 @@ export class PortugueseAudioService implements OnDestroy {
 
   playText(text: string, audioSource?: string | null): void {
     const normalizedAudioSource = this.normalizeAudioSource(audioSource);
-
-    this.stop();
+    const playbackRequestId = this.startNewPlayback();
 
     if (normalizedAudioSource) {
       if (this.unavailableAudioSources.has(normalizedAudioSource)) {
-        this.speak(text);
+        this.speak(text, playbackRequestId);
         return;
       }
 
@@ -34,18 +34,43 @@ export class PortugueseAudioService implements OnDestroy {
       this.currentAudio = audio;
 
       const fallbackToSpeech = (markAudioUnavailable: boolean): void => {
-        if (fallbackStarted || this.currentAudio !== audio) {
+        if (
+          fallbackStarted ||
+          this.currentAudio !== audio ||
+          this.playbackRequestId !== playbackRequestId
+        ) {
           return;
         }
 
-        fallbackStarted = true;
-        this.currentAudio = undefined;
+        const finishFallback = (): void => {
+          if (
+            fallbackStarted ||
+            this.currentAudio !== audio ||
+            this.playbackRequestId !== playbackRequestId
+          ) {
+            return;
+          }
 
-        if (markAudioUnavailable) {
-          this.unavailableAudioSources.add(normalizedAudioSource);
+          fallbackStarted = true;
+          this.currentAudio = undefined;
+
+          if (markAudioUnavailable) {
+            this.unavailableAudioSources.add(normalizedAudioSource);
+          }
+
+          this.speak(text, playbackRequestId);
+        };
+
+        if (!markAudioUnavailable) {
+          finishFallback();
+          return;
         }
 
-        this.speak(text);
+        this.isAudioSourceUnavailable(normalizedAudioSource).then(unavailable => {
+          if (unavailable) {
+            finishFallback();
+          }
+        });
       };
 
       audio.addEventListener('error', () => {
@@ -79,10 +104,21 @@ export class PortugueseAudioService implements OnDestroy {
       return;
     }
 
-    this.speak(text);
+    this.speak(text, playbackRequestId);
   }
 
   stop(): void {
+    this.playbackRequestId++;
+    this.stopCurrentPlayback();
+  }
+
+  private startNewPlayback(): number {
+    this.playbackRequestId++;
+    this.stopCurrentPlayback();
+    return this.playbackRequestId;
+  }
+
+  private stopCurrentPlayback(): void {
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
@@ -98,10 +134,14 @@ export class PortugueseAudioService implements OnDestroy {
     this.stop();
   }
 
-  private speak(text: string): void {
+  private speak(text: string, playbackRequestId: number): void {
     const spokenText = text.trim();
 
-    if (!spokenText || !this.canUseSpeechSynthesis()) {
+    if (
+      !spokenText ||
+      !this.canUseSpeechSynthesis() ||
+      this.playbackRequestId !== playbackRequestId
+    ) {
       return;
     }
 
@@ -132,5 +172,18 @@ export class PortugueseAudioService implements OnDestroy {
 
   private isPlaybackBlocked(error: unknown): boolean {
     return error instanceof DOMException && error.name === 'NotAllowedError';
+  }
+
+  private async isAudioSourceUnavailable(audioSource: string): Promise<boolean> {
+    try {
+      const response = await fetch(audioSource, {
+        method: 'HEAD',
+        cache: 'no-store'
+      });
+
+      return !response.ok;
+    } catch {
+      return false;
+    }
   }
 }
