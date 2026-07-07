@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { CityApiService } from '../../core/services/city-api.service';
 import { CityDetail } from '../../core/models/city.model';
 import { CityLocationMenuComponent } from '../../features/cities/city-location-menu/city-location-menu.component';
@@ -8,7 +7,7 @@ import { CityLocationMenuComponent } from '../../features/cities/city-location-m
 @Component({
   selector: 'app-city-page',
   standalone: true,
-  imports: [NgIf, CityLocationMenuComponent],
+  imports: [CityLocationMenuComponent],
   templateUrl: './city-page.component.html',
   styleUrl: './city-page.component.scss'
 })

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
   ActivityContent
@@ -9,7 +8,7 @@ import {
 @Component({
   selector: 'app-transformation-activity',
   standalone: true,
-  imports: [FormsModule, NgIf],
+  imports: [FormsModule],
   templateUrl: './transformation-activity.component.html',
   styleUrl: './transformation-activity.component.scss'
 })

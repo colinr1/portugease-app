@@ -9,14 +9,13 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { IntroDialogue, IntroDialogueLine } from '../../../core/models/lesson.model';
 import { PortugueseAudioService } from '../../../core/services/portuguese-audio.service';
 
 @Component({
   selector: 'app-intro-dialogue-modal',
   standalone: true,
-  imports: [NgIf],
+  imports: [],
   templateUrl: './intro-dialogue-modal.component.html',
   styleUrl: './intro-dialogue-modal.component.scss'
 })

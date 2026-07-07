@@ -1,9 +1,15 @@
 <section class="home-page">
-  <p *ngIf="loading">Loading map...</p>
-  <p *ngIf="errorMessage">{{ errorMessage }}</p>
+  @if (loading) {
+    <p>Loading map...</p>
+  }
 
-  <app-brazil-map
-    *ngIf="!loading && !errorMessage"
-    [cities]="cities"
-  />
+  @if (errorMessage) {
+    <p>{{ errorMessage }}</p>
+  }
+
+  @if (!loading && !errorMessage) {
+    <app-brazil-map
+      [cities]="cities"
+    />
+  }
 </section>

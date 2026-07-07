@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { LessonApiService } from '../../core/services/lesson-api.service';
 import { LessonDetail } from '../../core/models/lesson.model';
 import { LocationScenarioComponent } from '../../features/scenario/location-scenario/location-scenario.component';
@@ -8,7 +7,7 @@ import { LocationScenarioComponent } from '../../features/scenario/location-scen
 @Component({
   selector: 'app-location-page',
   standalone: true,
-  imports: [NgIf, LocationScenarioComponent],
+  imports: [LocationScenarioComponent],
   templateUrl: './location-page.component.html',
   styleUrl: './location-page.component.scss'
 })

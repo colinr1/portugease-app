@@ -1,15 +1,21 @@
-<p *ngIf="loading">Loading city...</p>
-<p *ngIf="errorMessage">{{ errorMessage }}</p>
+@if (loading) {
+  <p>Loading city...</p>
+}
 
-<section
-  *ngIf="city"
-  class="city-page"
-  [style.background-image]="backgroundImageStyle"
->
-  <div class="city-card">
-    <p class="eyebrow">City level</p>
-    <h1>{{ city.name }}</h1>
+@if (errorMessage) {
+  <p>{{ errorMessage }}</p>
+}
 
-    <app-city-location-menu [locations]="city.locations"></app-city-location-menu>
-  </div>
-</section>
+@if (city) {
+  <section
+    class="city-page"
+    [style.background-image]="backgroundImageStyle"
+  >
+    <div class="city-card">
+      <p class="eyebrow">City level</p>
+      <h1>{{ city.name }}</h1>
+
+      <app-city-location-menu [locations]="city.locations"></app-city-location-menu>
+    </div>
+  </section>
+}

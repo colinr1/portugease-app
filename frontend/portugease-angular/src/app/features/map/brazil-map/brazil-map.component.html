@@ -6,9 +6,8 @@
       alt="Map of Brazil"
     />
 
-    <app-city-marker
-      *ngFor="let city of cities"
-      [city]="city"
-    />
+    @for (city of cities; track city.id) {
+      <app-city-marker [city]="city" />
+    }
   </div>
 </div>

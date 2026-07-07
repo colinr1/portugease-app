@@ -17,31 +17,36 @@
   <span class="pulse" aria-hidden="true"></span>
 
   <span class="marker-visual" aria-hidden="true">
-    <img
-      *ngIf="hotspot.iconUrl"
-      class="marker-icon"
-      [src]="hotspot.iconUrl"
-      alt=""
-    />
+    @if (hotspot.iconUrl) {
+      <img
+        class="marker-icon"
+        [src]="hotspot.iconUrl"
+        alt=""
+      />
+    }
 
-    <span *ngIf="!hotspot.iconUrl" class="dot"></span>
+    @if (!hotspot.iconUrl) {
+      <span class="dot"></span>
+    }
   </span>
 
-  <span
-    *ngIf="!isVocabularyTooltip"
-    class="label"
-    aria-hidden="true"
-  >
-    {{ hotspot.label }}
-  </span>
+  @if (!isVocabularyTooltip) {
+    <span
+      class="label"
+      aria-hidden="true"
+    >
+      {{ hotspot.label }}
+    </span>
+  }
 
-  <span
-    *ngIf="isVocabularyTooltip && tooltipOpen && vocabulary"
-    class="vocab-tooltip-box"
-    [id]="tooltipId"
-    role="tooltip"
-  >
-    <strong lang="pt-BR">{{ vocabulary.portugueseText }}</strong>
-    <span>{{ vocabulary.englishTranslation }}</span>
-  </span>
+  @if (isVocabularyTooltip && tooltipOpen && vocabulary) {
+    <span
+      class="vocab-tooltip-box"
+      [id]="tooltipId"
+      role="tooltip"
+    >
+      <strong lang="pt-BR">{{ vocabulary.portugueseText }}</strong>
+      <span>{{ vocabulary.englishTranslation }}</span>
+    </span>
+  }
 </button>

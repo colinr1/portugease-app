@@ -1,15 +1,18 @@
-<section class="hint-panel" *ngIf="visibleHints.length > 0" aria-live="polite">
-  <div
-    *ngFor="let hint of visibleHints"
-    class="hint-item"
-    [class.extra-hint]="hint.level >= 2"
-  >
-    <p class="hint-label">
-      {{ hint.level >= 2 ? 'Extra hint' : 'Hint' }}
-    </p>
+@if (visibleHints.length > 0) {
+  <section class="hint-panel" aria-live="polite">
+    @for (hint of visibleHints; track $index) {
+      <div
+        class="hint-item"
+        [class.extra-hint]="hint.level >= 2"
+      >
+        <p class="hint-label">
+          {{ hint.level >= 2 ? 'Extra hint' : 'Hint' }}
+        </p>
 
-    <p class="hint-text">
-      {{ hint.text }}
-    </p>
-  </div>
-</section>
+        <p class="hint-text">
+          {{ hint.text }}
+        </p>
+      </div>
+    }
+  </section>
+}

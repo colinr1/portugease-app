@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
   ActivityContent,
@@ -9,7 +8,7 @@ import {
 @Component({
   selector: 'app-multiple-choice-activity',
   standalone: true,
-  imports: [NgFor, NgIf],
+  imports: [],
   templateUrl: './multiple-choice-activity.component.html',
   styleUrl: './multiple-choice-activity.component.scss'
 })

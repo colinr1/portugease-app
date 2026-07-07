@@ -11,12 +11,12 @@
     <span class="toggle-chevron" aria-hidden="true">{{ open ? '⌄' : '⌃' }}</span>
   </button>
 
-  <section
-    *ngIf="open"
-    id="beach-task-panel"
-    class="task-panel"
-    aria-label="Beach tasks"
-  >
+  @if (open) {
+    <section
+      id="beach-task-panel"
+      class="task-panel"
+      aria-label="Beach tasks"
+    >
 <!--    <header class="task-panel-header">-->
 <!--      <div>-->
 <!--        <h2>Beach Tasks</h2>-->
@@ -32,16 +32,18 @@
 <!--      </button>-->
 <!--    </header>-->
 
-    <div class="task-list">
-      <button
-        type="button"
-        class="task-card"
-        *ngFor="let activity of sortedActivities"
-        [ngClass]="activityTypeClass(activity)"
-        (click)="selectActivity(activity)"
-      >
-        <span class="task-type">{{ activityTypeLabel(activity) }}</span>
-      </button>
-    </div>
-  </section>
+      <div class="task-list">
+        @for (activity of sortedActivities; track activity.id) {
+          <button
+            type="button"
+            class="task-card"
+            [ngClass]="activityTypeClass(activity)"
+            (click)="selectActivity(activity)"
+          >
+            <span class="task-type">{{ activityTypeLabel(activity) }}</span>
+          </button>
+        }
+      </div>
+    </section>
+  }
 </div>

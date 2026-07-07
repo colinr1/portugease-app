@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   ActivityAnswerSubmitted,
@@ -10,7 +9,7 @@ import {
 @Component({
   selector: 'app-matching-activity',
   standalone: true,
-  imports: [NgFor, FormsModule],
+  imports: [FormsModule],
   templateUrl: './matching-activity.component.html',
   styleUrl: './matching-activity.component.scss'
 })

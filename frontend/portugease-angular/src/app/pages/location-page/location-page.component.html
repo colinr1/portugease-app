@@ -1,7 +1,13 @@
-<p *ngIf="loading">Loading location...</p>
-<p *ngIf="errorMessage">{{ errorMessage }}</p>
+@if (loading) {
+  <p>Loading location...</p>
+}
 
-<app-location-scenario
-  *ngIf="lesson"
-  [lesson]="lesson"
-/>
+@if (errorMessage) {
+  <p>{{ errorMessage }}</p>
+}
+
+@if (lesson) {
+  <app-location-scenario
+    [lesson]="lesson"
+  />
+}

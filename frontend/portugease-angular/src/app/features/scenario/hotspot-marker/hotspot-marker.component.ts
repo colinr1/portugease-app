@@ -6,7 +6,6 @@ import {
   Input,
   Output
 } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { Hotspot, VocabularyTooltipContent } from '../../../core/models/hotspot.model';
 import {
   isIntroDialogueHotspot,
@@ -17,7 +16,7 @@ import { PortugueseAudioService } from '../../../core/services/portuguese-audio.
 @Component({
   selector: 'app-hotspot-marker',
   standalone: true,
-  imports: [NgIf],
+  imports: [],
   templateUrl: './hotspot-marker.component.html',
   styleUrl: './hotspot-marker.component.scss'
 })

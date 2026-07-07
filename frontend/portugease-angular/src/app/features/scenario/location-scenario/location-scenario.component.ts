@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { IntroDialogueFocusMarker, IntroDialogueLine, LessonDetail } from '../../../core/models/lesson.model';
 import { ActivityContent } from '../../../core/models/activity.model';
 import { Hotspot } from '../../../core/models/hotspot.model';
@@ -21,7 +20,6 @@ import {
   selector: 'app-location-scenario',
   standalone: true,
   imports: [
-    NgIf,
     ImageSceneComponent,
     ScenarioInteractionModalComponent,
     IntroDialogueModalComponent,

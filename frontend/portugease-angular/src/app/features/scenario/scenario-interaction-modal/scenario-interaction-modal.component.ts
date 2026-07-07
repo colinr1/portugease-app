@@ -8,7 +8,6 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { ActivityContent } from '../../../core/models/activity.model';
 import { Hotspot } from '../../../core/models/hotspot.model';
 import { ActivityRendererComponent } from '../../activities/activity-renderer/activity-renderer.component';
@@ -17,7 +16,6 @@ import { ActivityRendererComponent } from '../../activities/activity-renderer/ac
   selector: 'app-scenario-interaction-modal',
   standalone: true,
   imports: [
-    NgIf,
     ActivityRendererComponent
   ],
   templateUrl: './scenario-interaction-modal.component.html',

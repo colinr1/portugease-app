@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { BrazilMapComponent } from '../../features/map/brazil-map/brazil-map.component';
 import { CityApiService } from '../../core/services/city-api.service';
 import { CityListItem } from '../../core/models/city.model';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [BrazilMapComponent, NgIf],
+  imports: [BrazilMapComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })

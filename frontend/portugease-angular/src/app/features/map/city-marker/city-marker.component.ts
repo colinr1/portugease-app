@@ -1,12 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { CityListItem } from '../../../core/models/city.model';
 
 @Component({
   selector: 'app-city-marker',
   standalone: true,
-  imports: [RouterLink, NgIf],
+  imports: [RouterLink],
   templateUrl: './city-marker.component.html',
   styleUrl: './city-marker.component.scss'
 })

@@ -14,9 +14,11 @@
         [disabled]="loading"
       />
 
-      <p *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </p>
+      @if (errorMessage) {
+        <p class="error-message">
+          {{ errorMessage }}
+        </p>
+      }
 
       <button type="submit" [disabled]="loading">
         {{ loading ? 'Checking...' : 'Start' }}

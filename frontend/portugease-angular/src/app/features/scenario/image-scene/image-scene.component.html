@@ -1,37 +1,43 @@
 <div class="scene-shell">
   <div class="image-scene" [class.loaded]="imageLoaded">
-    <img
-      *ngIf="imagePath"
-      class="scene-image"
-      [src]="imagePath"
-      [alt]="altText"
-      draggable="false"
-      (load)="onImageLoad()"
-      (error)="onImageError()"
-    />
+    @if (imagePath) {
+      <img
+        class="scene-image"
+        [src]="imagePath"
+        [alt]="altText"
+        draggable="false"
+        (load)="onImageLoad()"
+        (error)="onImageError()"
+      />
+    }
 
-    <div *ngIf="!imagePath || imageFailed" class="image-error">
-      <p>Scene image could not be loaded.</p>
-    </div>
+    @if (!imagePath || imageFailed) {
+      <div class="image-error">
+        <p>Scene image could not be loaded.</p>
+      </div>
+    }
 
-    <div
-      *ngIf="imageLoaded && introFocusMarkers.length"
-      class="intro-focus-overlay"
-      aria-hidden="true"
-    >
-      <span
-        *ngFor="let marker of introFocusMarkers"
-        class="intro-focus-marker"
-        [style.left.%]="marker.xPercent"
-        [style.top.%]="marker.yPercent"
-        [attr.title]="marker.ariaLabel || 'Dialogue focus marker'"
-      ></span>
-    </div>
+    @if (imageLoaded && introFocusMarkers.length) {
+      <div
+        class="intro-focus-overlay"
+        aria-hidden="true"
+      >
+        @for (marker of introFocusMarkers; track $index) {
+          <span
+            class="intro-focus-marker"
+            [style.left.%]="marker.xPercent"
+            [style.top.%]="marker.yPercent"
+            [attr.title]="marker.ariaLabel || 'Dialogue focus marker'"
+          ></span>
+        }
+      </div>
+    }
 
-    <app-hotspot-overlay
-      *ngIf="imageLoaded"
-      [hotspots]="hotspots"
-      (hotspotSelected)="onHotspotSelected($event)"
-    />
+    @if (imageLoaded) {
+      <app-hotspot-overlay
+        [hotspots]="hotspots"
+        (hotspotSelected)="onHotspotSelected($event)"
+      />
+    }
   </div>
 </div>

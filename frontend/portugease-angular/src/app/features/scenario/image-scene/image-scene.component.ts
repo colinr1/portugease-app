@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import {NgFor, NgIf} from '@angular/common';
 import { Hotspot } from '../../../core/models/hotspot.model';
 import { HotspotOverlayComponent } from '../hotspot-overlay/hotspot-overlay.component';
 import {IntroDialogueFocusMarker} from "../../../core/models/lesson.model";
@@ -7,7 +6,7 @@ import {IntroDialogueFocusMarker} from "../../../core/models/lesson.model";
 @Component({
   selector: 'app-image-scene',
   standalone: true,
-  imports: [NgIf, NgFor, HotspotOverlayComponent],
+  imports: [HotspotOverlayComponent],
   templateUrl: './image-scene.component.html',
   styleUrl: './image-scene.component.scss'
 })

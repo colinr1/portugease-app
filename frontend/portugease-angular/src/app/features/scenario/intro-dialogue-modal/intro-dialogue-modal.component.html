@@ -16,15 +16,16 @@
       </div>
 
       <div class="header-actions">
-        <button
-          type="button"
-          class="audio-button"
-          *ngIf="currentLine?.portugueseText"
-          [attr.aria-label]="playAudioLabel"
-          (click)="playCurrentAudio()"
-        >
-          Play audio
-        </button>
+        @if (currentLine?.portugueseText) {
+          <button
+            type="button"
+            class="audio-button"
+            [attr.aria-label]="playAudioLabel"
+            (click)="playCurrentAudio()"
+          >
+            Play audio
+          </button>
+        }
 
         <button
           type="button"
@@ -47,26 +48,25 @@
       </div>
     </header>
 
-    <section
-      *ngIf="currentLine; else emptyDialogue"
-      class="dialogue-line"
-      aria-live="polite"
-    >
-      <div class="translation-card">
-        <p class="portuguese-text" lang="pt-BR">
-          {{ currentLine.portugueseText }}
-        </p>
+    @if (currentLine) {
+      <section
+        class="dialogue-line"
+        aria-live="polite"
+      >
+        <div class="translation-card">
+          <p class="portuguese-text" lang="pt-BR">
+            {{ currentLine.portugueseText }}
+          </p>
 
-        <div class="translation-divider" aria-hidden="true"></div>
+          <div class="translation-divider" aria-hidden="true"></div>
 
-        <p class="english-translation">
-          {{ currentLine.englishTranslation }}
-        </p>
-      </div>
+          <p class="english-translation">
+            {{ currentLine.englishTranslation }}
+          </p>
+        </div>
 
-    </section>
-
-    <ng-template #emptyDialogue>
+      </section>
+    } @else {
       <section class="empty-state">
         <p>No dialogue lines are available.</p>
 
@@ -79,6 +79,6 @@
           Close
         </button>
       </section>
-    </ng-template>
+    }
   </section>
 </div>

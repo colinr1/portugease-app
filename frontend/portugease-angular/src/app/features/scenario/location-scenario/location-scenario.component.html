@@ -15,51 +15,56 @@
       (hotspotSelected)="onHotspotSelected($event)"
     ></app-image-scene>
 
-    <div class="beach-task-tray-layer" *ngIf="!modalOpen">
-      <app-beach-task-tray
-        *ngIf="!modalOpen"
-        [activities]="lesson.activities"
-        (openChange)="onTaskTrayOpenChange($event)"
-        (activitySelected)="onActivityTaskSelected($event)"
-      ></app-beach-task-tray>
-    </div>
+    @if (!modalOpen) {
+      <div class="beach-task-tray-layer">
+        <app-beach-task-tray
+          [activities]="lesson.activities"
+          (openChange)="onTaskTrayOpenChange($event)"
+          (activitySelected)="onActivityTaskSelected($event)"
+        ></app-beach-task-tray>
+      </div>
+    }
 
     <div class="desktop-modal-layer">
+      @if (selectedActivity && selectedHotspot) {
+        <app-scenario-interaction-modal
+          [activity]="selectedActivity"
+          [locationName]="lesson.title"
+          [hotspot]="selectedHotspot"
+          (closed)="closeNormalModal()"
+        ></app-scenario-interaction-modal>
+      }
+
+      @if (introDialogueOpen && lesson.introDialogue) {
+        <app-intro-dialogue-modal
+          [dialogue]="lesson.introDialogue"
+          (lineChanged)="onIntroDialogueLineChanged($event)"
+          (closed)="onIntroDialogueClosed()"
+          (finished)="onIntroDialogueFinished()"
+        ></app-intro-dialogue-modal>
+      }
+    </div>
+  </div>
+
+  <div class="mobile-modal-layer">
+    @if (selectedActivity && selectedHotspot) {
       <app-scenario-interaction-modal
-        *ngIf="selectedActivity && selectedHotspot"
+        class="below-image-modal"
         [activity]="selectedActivity"
         [locationName]="lesson.title"
         [hotspot]="selectedHotspot"
         (closed)="closeNormalModal()"
       ></app-scenario-interaction-modal>
+    }
 
+    @if (introDialogueOpen && lesson.introDialogue) {
       <app-intro-dialogue-modal
-        *ngIf="introDialogueOpen && lesson.introDialogue"
+        class="below-image-modal"
         [dialogue]="lesson.introDialogue"
         (lineChanged)="onIntroDialogueLineChanged($event)"
         (closed)="onIntroDialogueClosed()"
         (finished)="onIntroDialogueFinished()"
       ></app-intro-dialogue-modal>
-    </div>
-  </div>
-
-  <div class="mobile-modal-layer">
-    <app-scenario-interaction-modal
-      *ngIf="selectedActivity && selectedHotspot"
-      class="below-image-modal"
-      [activity]="selectedActivity"
-      [locationName]="lesson.title"
-      [hotspot]="selectedHotspot"
-      (closed)="closeNormalModal()"
-    ></app-scenario-interaction-modal>
-
-    <app-intro-dialogue-modal
-      *ngIf="introDialogueOpen && lesson.introDialogue"
-      class="below-image-modal"
-      [dialogue]="lesson.introDialogue"
-      (lineChanged)="onIntroDialogueLineChanged($event)"
-      (closed)="onIntroDialogueClosed()"
-      (finished)="onIntroDialogueFinished()"
-    ></app-intro-dialogue-modal>
+    }
   </div>
 </section>

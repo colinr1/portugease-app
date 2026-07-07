@@ -4,67 +4,76 @@
     <h3>{{ activity.title }}</h3>
   </header>
 
-  <app-hint-panel
-    *ngIf="hasVisibleHints"
-    [hints]="hints"
-    [visibleHintLevel]="visibleHintLevel"
-  ></app-hint-panel>
+  @if (hasVisibleHints) {
+    <app-hint-panel
+      [hints]="hints"
+      [visibleHintLevel]="visibleHintLevel"
+    ></app-hint-panel>
+  }
 
-  <p *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </p>
+  @if (errorMessage) {
+    <p class="error-message">
+      {{ errorMessage }}
+    </p>
+  }
 
-  <ng-container *ngIf="!hasFeedback; else feedbackState">
-    <div [ngSwitch]="activityType">
-      <app-multiple-choice-activity
-        *ngSwitchCase="'MULTIPLE_CHOICE'"
-        [activity]="activity"
-        [disabled]="submitting"
-        (answerSubmitted)="onAnswerSubmitted($event)"
-      ></app-multiple-choice-activity>
+  @if (!hasFeedback) {
+    @switch (activityType) {
+      @case ('MULTIPLE_CHOICE') {
+        <app-multiple-choice-activity
+          [activity]="activity"
+          [disabled]="submitting"
+          (answerSubmitted)="onAnswerSubmitted($event)"
+        ></app-multiple-choice-activity>
+      }
 
-      <app-sentence-builder-activity
-        *ngSwitchCase="'SENTENCE_BUILDING'"
-        [activity]="activity"
-        [disabled]="submitting"
-        (answerSubmitted)="onAnswerSubmitted($event)"
-      ></app-sentence-builder-activity>
+      @case ('SENTENCE_BUILDING') {
+        <app-sentence-builder-activity
+          [activity]="activity"
+          [disabled]="submitting"
+          (answerSubmitted)="onAnswerSubmitted($event)"
+        ></app-sentence-builder-activity>
+      }
 
-      <app-matching-activity
-        *ngSwitchCase="'WORD_MATCHING'"
-        [activity]="activity"
-        [disabled]="submitting"
-        (answerSubmitted)="onAnswerSubmitted($event)"
-      ></app-matching-activity>
+      @case ('WORD_MATCHING') {
+        <app-matching-activity
+          [activity]="activity"
+          [disabled]="submitting"
+          (answerSubmitted)="onAnswerSubmitted($event)"
+        ></app-matching-activity>
+      }
 
-      <app-listening-activity
-        *ngSwitchCase="'LISTENING'"
-        [activity]="activity"
-        [disabled]="submitting"
-        (answerSubmitted)="onAnswerSubmitted($event)"
-      ></app-listening-activity>
+      @case ('LISTENING') {
+        <app-listening-activity
+          [activity]="activity"
+          [disabled]="submitting"
+          (answerSubmitted)="onAnswerSubmitted($event)"
+        ></app-listening-activity>
+      }
 
-      <app-transformation-activity
-        *ngSwitchCase="'SENTENCE_TRANSFORMATION'"
-        [activity]="activity"
-        [disabled]="submitting"
-        (answerSubmitted)="onAnswerSubmitted($event)"
-      ></app-transformation-activity>
+      @case ('SENTENCE_TRANSFORMATION') {
+        <app-transformation-activity
+          [activity]="activity"
+          [disabled]="submitting"
+          (answerSubmitted)="onAnswerSubmitted($event)"
+        ></app-transformation-activity>
+      }
 
-      <app-multiple-choice-activity
-        *ngSwitchCase="'SCENARIO_CHALLENGE'"
-        [activity]="activity"
-        [disabled]="submitting"
-        (answerSubmitted)="onAnswerSubmitted($event)"
-      ></app-multiple-choice-activity>
+      @case ('SCENARIO_CHALLENGE') {
+        <app-multiple-choice-activity
+          [activity]="activity"
+          [disabled]="submitting"
+          (answerSubmitted)="onAnswerSubmitted($event)"
+        ></app-multiple-choice-activity>
+      }
 
-      <p *ngSwitchDefault class="unsupported-message">
-        Unsupported activity type: {{ activity.activityType }}
-      </p>
-    </div>
-  </ng-container>
-
-  <ng-template #feedbackState>
+      @default {
+        <p class="unsupported-message">
+          Unsupported activity type: {{ activity.activityType }}
+        </p>
+      }
+    }
+  } @else {
     <app-feedback-panel [feedback]="feedback"></app-feedback-panel>
 
     <div class="feedback-actions">
@@ -76,9 +85,11 @@
         Return to {{ locationName }}
       </button>
     </div>
-  </ng-template>
+  }
 
-  <p *ngIf="submitting" class="submitting-message">
-    Checking your answer...
-  </p>
+  @if (submitting) {
+    <p class="submitting-message">
+      Checking your answer...
+    </p>
+  }
 </section>

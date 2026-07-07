@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
   ActivityContent,
@@ -26,10 +25,6 @@ import {
   selector: 'app-activity-renderer',
   standalone: true,
   imports: [
-    NgIf,
-    NgSwitch,
-    NgSwitchCase,
-    NgSwitchDefault,
     MultipleChoiceActivityComponent,
     SentenceBuilderActivityComponent,
     MatchingActivityComponent,

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { AppHeaderComponent } from './layout/app-header/app-header.component';
 import { LearnerUserService } from './core/services/learner-user.service';
@@ -9,7 +9,6 @@ import { UserSelectionModalComponent } from './shared/components/user-selection-
   selector: 'app-root',
   standalone: true,
   imports: [
-    NgIf,
     AsyncPipe,
     RouterOutlet,
     AppHeaderComponent,

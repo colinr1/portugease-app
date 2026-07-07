@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
 import { LearnerUserService } from '../../../core/services/learner-user.service';
 
 @Component({
   selector: 'app-user-selection-modal',
   standalone: true,
-  imports: [FormsModule, NgIf],
+  imports: [FormsModule],
   templateUrl: './user-selection-modal.component.html',
   styleUrl: './user-selection-modal.component.scss'
 })

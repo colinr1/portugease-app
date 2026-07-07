@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgFor } from '@angular/common';
 import { Hotspot } from '../../../core/models/hotspot.model';
 import { HotspotMarkerComponent } from '../hotspot-marker/hotspot-marker.component';
 
 @Component({
   selector: 'app-hotspot-overlay',
   standalone: true,
-  imports: [NgFor, HotspotMarkerComponent],
+  imports: [HotspotMarkerComponent],
   templateUrl: './hotspot-overlay.component.html',
   styleUrl: './hotspot-overlay.component.scss'
 })

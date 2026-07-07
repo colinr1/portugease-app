@@ -1,5 +1,7 @@
-<div class="audio-player" *ngIf="src">
-  <audio controls [src]="src">
-    Your browser does not support audio playback.
-  </audio>
-</div>
+@if (src) {
+  <div class="audio-player">
+    <audio controls [src]="src">
+      Your browser does not support audio playback.
+    </audio>
+  </div>
+}

@@ -1,18 +1,22 @@
 <section class="activity-form">
-  <div class="match-row" *ngFor="let pair of pairs">
-    <strong>{{ pair.left }}</strong>
+  @for (pair of pairs; track $index) {
+    <div class="match-row">
+      <strong>{{ pair.left }}</strong>
 
-    <select
-      [(ngModel)]="answers[pair.left]"
-      [disabled]="disabled"
-      [attr.aria-label]="'Choose match for ' + pair.left"
-    >
-      <option value="">Choose match</option>
-      <option *ngFor="let option of rightOptions" [value]="option">
-        {{ option }}
-      </option>
-    </select>
-  </div>
+      <select
+        [(ngModel)]="answers[pair.left]"
+        [disabled]="disabled"
+        [attr.aria-label]="'Choose match for ' + pair.left"
+      >
+        <option value="">Choose match</option>
+        @for (option of rightOptions; track $index) {
+          <option [value]="option">
+            {{ option }}
+          </option>
+        }
+      </select>
+    </div>
+  }
 
   <button
     type="button"

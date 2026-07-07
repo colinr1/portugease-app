@@ -1,12 +1,16 @@
 <section class="activity-form">
   <div class="instructions">
-    <p *ngIf="prompt" class="prompt">
-      {{ prompt }}
-    </p>
+    @if (prompt) {
+      <p class="prompt">
+        {{ prompt }}
+      </p>
+    }
 
-    <p *ngIf="sourceSentence" class="source">
-      {{ sourceSentence }}
-    </p>
+    @if (sourceSentence) {
+      <p class="source">
+        {{ sourceSentence }}
+      </p>
+    }
   </div>
 
   <label>

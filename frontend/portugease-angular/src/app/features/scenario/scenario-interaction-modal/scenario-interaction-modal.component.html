@@ -15,16 +15,19 @@
       ×
     </button>
 
-    <app-activity-renderer
-      *ngIf="activity"
-      [activity]="activity"
-      [locationName]="locationName"
-      (finished)="close()"
-    ></app-activity-renderer>
+    @if (activity) {
+      <app-activity-renderer
+        [activity]="activity"
+        [locationName]="locationName"
+        (finished)="close()"
+      ></app-activity-renderer>
+    }
 
-    <section *ngIf="!activity" class="content-fallback">
-      <h2>{{ hotspot.label }}</h2>
-      <p>Select an activity or learning item to continue.</p>
-    </section>
+    @if (!activity) {
+      <section class="content-fallback">
+        <h2>{{ hotspot.label }}</h2>
+        <p>Select an activity or learning item to continue.</p>
+      </section>
+    }
   </section>
 </div>

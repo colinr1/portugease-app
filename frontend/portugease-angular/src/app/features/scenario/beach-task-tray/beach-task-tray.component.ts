@@ -1,11 +1,11 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivityContent } from '../../../core/models/activity.model';
 
 @Component({
   selector: 'app-beach-task-tray',
   standalone: true,
-  imports: [NgClass, NgFor, NgIf],
+  imports: [NgClass],
   templateUrl: './beach-task-tray.component.html',
   styleUrl: './beach-task-tray.component.scss'
 })

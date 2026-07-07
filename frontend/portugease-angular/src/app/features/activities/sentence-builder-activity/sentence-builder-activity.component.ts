@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { NgFor } from '@angular/common';
 import {
   ActivityAnswerSubmitted,
   ActivityContent
@@ -8,7 +7,7 @@ import {
 @Component({
   selector: 'app-sentence-builder-activity',
   standalone: true,
-  imports: [NgFor],
+  imports: [],
   templateUrl: './sentence-builder-activity.component.html',
   styleUrl: './sentence-builder-activity.component.scss'
 })

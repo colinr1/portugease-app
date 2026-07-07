@@ -1,23 +1,25 @@
 <div class="location-grid">
-  <a
-    *ngFor="let location of locations"
-    class="location-card"
-    [class.locked]="location.status === 'LOCKED'"
-    [routerLink]="location.status === 'LOCKED' ? null : ['/locations', location.id]"
-    [attr.aria-disabled]="location.status === 'LOCKED'"
-  >
-    <img
-      *ngIf="location.backgroundImage?.filePath"
-      [src]="location.backgroundImage?.filePath"
-      [alt]="location.backgroundImage?.altText || location.name"
-    />
+  @for (location of locations; track location.id) {
+    <a
+      class="location-card"
+      [class.locked]="location.status === 'LOCKED'"
+      [routerLink]="location.status === 'LOCKED' ? null : ['/locations', location.id]"
+      [attr.aria-disabled]="location.status === 'LOCKED'"
+    >
+      @if (location.backgroundImage?.filePath) {
+        <img
+          [src]="location.backgroundImage?.filePath"
+          [alt]="location.backgroundImage?.altText || location.name"
+        />
+      }
 
-    <div class="content">
-      <h2>{{ location.name }}</h2>
+      <div class="content">
+        <h2>{{ location.name }}</h2>
 
-      <div class="meta">
-        <strong>{{ location.status }}</strong>
+        <div class="meta">
+          <strong>{{ location.status }}</strong>
+        </div>
       </div>
-    </div>
-  </a>
+    </a>
+  }
 </div>

@@ -1,12 +1,13 @@
-<section
-  *ngIf="feedback"
-  class="feedback"
-  [class.correct]="feedback.isCorrect"
-  [class.incorrect]="!feedback.isCorrect"
->
-  <h3>{{ feedback.isCorrect ? 'Correct!' : 'Try again' }}</h3>
+@if (feedback) {
+  <section
+    class="feedback"
+    [class.correct]="feedback.isCorrect"
+    [class.incorrect]="!feedback.isCorrect"
+  >
+    <h3>{{ feedback.isCorrect ? 'Correct!' : 'Try again' }}</h3>
 
-  <p class="score">
-    Score: {{ feedback.score }} / {{ feedback.maxScore }}
-  </p>
-</section>
+    <p class="score">
+      Score: {{ feedback.score }} / {{ feedback.maxScore }}
+    </p>
+  </section>
+}
