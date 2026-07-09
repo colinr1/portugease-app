@@ -1,0 +1,185 @@
+:host {
+  display: block;
+}
+
+.create-location-page {
+  min-height: 100%;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: var(--color-green-light);
+}
+
+.create-location-shell {
+  width: min(960px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.instructions-box,
+.create-location-form,
+.generated-prompt-panel,
+.chatgpt-link-box {
+  border: 1px solid var(--color-grey);
+  border-radius: 8px;
+  background: var(--color-white);
+  box-shadow: 0 10px 26px rgba(23, 23, 23, 0.08);
+}
+
+.instructions-box {
+  min-height: 6rem;
+  padding: 1rem;
+}
+
+.create-location-form,
+.generated-prompt-panel {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+h1 {
+  margin: 0;
+  color: var(--color-green);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+label,
+legend {
+  font-weight: 800;
+}
+
+label span {
+  margin-left: 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 2px solid var(--color-grey);
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.generated-prompt-panel textarea {
+  min-height: min(64vh, 42rem);
+  white-space: pre-wrap;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-blue);
+  outline: 3px solid var(--color-blue-light);
+}
+
+.field-meta,
+.field-error {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.field-meta {
+  color: var(--color-muted);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.hotspots-fieldset {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-grey);
+  border-radius: 8px;
+}
+
+.hotspot-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.generated-prompt-actions {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.chatgpt-link-box {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  text-align: center;
+}
+
+.chatgpt-link-box a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.9rem 1.5rem;
+  background: var(--color-blue);
+  color: var(--color-white);
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.chatgpt-link-box a:hover,
+.chatgpt-link-box a:focus-visible {
+  background: var(--color-green);
+  outline: 3px solid var(--color-blue-light);
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-green);
+  color: var(--color-white);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button:hover,
+button:focus-visible {
+  background: var(--color-green-hover);
+  outline: none;
+}
+
+button:disabled {
+  background: var(--color-grey);
+  color: var(--color-muted);
+  cursor: not-allowed;
+}

@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
 .app-main {
-  min-height: calc(100vh - 64px);
+  flex: 1;
 }

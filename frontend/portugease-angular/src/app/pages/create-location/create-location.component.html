@@ -1,0 +1,137 @@
+<section class="create-location-page">
+  <div class="create-location-shell">
+    <section class="instructions-box" aria-label="Create location instructions"></section>
+
+    @if (generatedPrompt) {
+      <section class="generated-prompt-panel">
+        <h1>Create a new location</h1>
+        <label for="generatedPrompt">Generated prompt</label>
+        <textarea
+          #generatedPromptBox
+          id="generatedPrompt"
+          readonly
+          [value]="generatedPrompt"
+        ></textarea>
+
+        <div class="form-actions generated-prompt-actions">
+          <button type="button" (click)="startNewPrompt()">
+            New Prompt
+          </button>
+          <button type="button" (click)="copyGeneratedPrompt()">
+            Copy text
+          </button>
+        </div>
+      </section>
+
+      <section class="chatgpt-link-box" aria-label="Open ChatGPT">
+        <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
+          Go to ChatGpt
+        </a>
+      </section>
+    } @else {
+      <form
+        class="create-location-form"
+        [formGroup]="createLocationForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <h1>Create a new location</h1>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="cityId">City</label>
+            <select id="cityId" formControlName="cityId">
+              <option value="" disabled>
+                {{ citiesLoading ? 'Loading cities...' : 'Select a city' }}
+              </option>
+
+              @for (city of cities; track city.id) {
+                <option [value]="city.id">{{ city.name }}</option>
+              }
+            </select>
+
+            @if (cityLoadError) {
+              <p class="field-error">{{ cityLoadError }}</p>
+            } @else if (fieldIsInvalid('cityId')) {
+              <p class="field-error">City is required.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label for="locationName">Location Name</label>
+            <input id="locationName" type="text" formControlName="locationName">
+
+            @if (fieldIsInvalid('locationName')) {
+              <p class="field-error">Location name is required.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label for="imageStyle">Image style</label>
+            <select id="imageStyle" formControlName="imageStyle">
+              <option value="" disabled>Select an image style</option>
+
+              @for (imageStyle of imageStyles; track imageStyle) {
+                <option [value]="imageStyle">{{ imageStyle }}</option>
+              }
+            </select>
+
+            @if (fieldIsInvalid('imageStyle')) {
+              <p class="field-error">Image style is required.</p>
+            }
+          </div>
+
+          <div class="field field-full">
+            <label for="sceneDescription">Scene description</label>
+            <textarea
+              id="sceneDescription"
+              rows="5"
+              formControlName="sceneDescription"
+            ></textarea>
+            <p class="field-meta">{{ sceneDescriptionWordCount }} / 50 words</p>
+
+            @if (fieldIsInvalid('sceneDescription')) {
+              @if (createLocationForm.controls.sceneDescription.hasError('required')) {
+                <p class="field-error">Scene description is required.</p>
+              } @else if (createLocationForm.controls.sceneDescription.hasError('minWords')) {
+                <p class="field-error">Scene description must be at least 5 words.</p>
+              } @else if (createLocationForm.controls.sceneDescription.hasError('maxWords')) {
+                <p class="field-error">Scene description must be 50 words or fewer.</p>
+              }
+            }
+          </div>
+        </div>
+
+        <fieldset class="hotspots-fieldset" formArrayName="vocabularyHotspots">
+          <legend>Vocabulary hotspots</legend>
+          <p class="field-meta">Add at least 5 and up to 20 vocabulary hotspots.</p>
+
+          <div class="hotspot-list">
+            @for (hotspotControl of vocabularyHotspotControls; track hotspotControl; let index = $index) {
+              <div class="field hotspot-field">
+                <label [for]="'vocabularyHotspot' + index">
+                  Vocabulary hotspot {{ index + 1 }}
+                  <span>{{ index < requiredHotspotCount ? 'Required' : 'Optional' }}</span>
+                </label>
+                <input
+                  [id]="'vocabularyHotspot' + index"
+                  type="text"
+                  [formControlName]="index"
+                >
+
+                @if (hotspotIsInvalid(index)) {
+                  <p class="field-error">Vocabulary hotspot {{ index + 1 }} is required.</p>
+                }
+              </div>
+            }
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="createLocationForm.invalid || citiesLoading">
+            Submit
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</section>
