@@ -22,33 +22,66 @@ export type NormalizedActivityType =
 
 export type DifficultyLevel = 'EASY' | 'NORMAL' | 'HARD';
 
+export interface ActivityDefinitionHint {
+  text: string;
+}
+
 export interface ActivityHint {
   level: number;
   text: string;
 }
 
-export interface ActivityContent {
-  id: string;
-  locationId: string;
-  activityKey: string;
-  activityType: ActivityType;
-  title: string;
-  instructions?: string | null;
-  definition: Record<string, unknown>;
-  learningItems?: Record<string, unknown>;
-  maxScore: number;
-  requiredForCompletion: boolean;
-  displayOrder: number;
-  selectedDifficulty?: DifficultyLevel;
+export interface ActivityDefinitionBase {
+  hints?: ActivityDefinitionHint[];
+}
+
+export interface SentenceBuildingDefinition extends ActivityDefinitionBase {
+  tokens: string[];
+}
+
+export interface ListeningDefinition extends ActivityDefinitionBase {
+  audioUrl: string;
+}
+
+export interface WordMatchingDefinition extends ActivityDefinitionBase {
+  leftItems: string[];
+  rightItems: string[];
 }
 
 export interface MultipleChoiceOption {
   id: string;
   text: string;
-  isCorrect?: boolean;
 }
 
-export interface WordMatchPair {
+export interface MultipleChoiceDefinition extends ActivityDefinitionBase {
+  question: string;
+  options: MultipleChoiceOption[];
+}
+
+export interface SentenceTransformationDefinition extends ActivityDefinitionBase {
+  prompt: string;
+  sourceSentence: string;
+}
+
+export type ActivityDefinition =
+  | SentenceBuildingDefinition
+  | ListeningDefinition
+  | WordMatchingDefinition
+  | MultipleChoiceDefinition
+  | SentenceTransformationDefinition;
+
+export interface ActivityContent {
+  id: string;
+  activityKey: string;
+  activityType: ActivityType;
+  title: string;
+  instructions?: string | null;
+  definition: ActivityDefinition;
+  displayOrder: number;
+  selectedDifficulty?: DifficultyLevel;
+}
+
+export interface WordMatchSelection {
   left: string;
   right: string;
 }

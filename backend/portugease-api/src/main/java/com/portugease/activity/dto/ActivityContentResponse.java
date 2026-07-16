@@ -7,15 +7,11 @@ import java.util.UUID;
 
 public record ActivityContentResponse(
         UUID id,
-        UUID locationId,
         String activityKey,
         ActivityType activityType,
         String title,
         String instructions,
         Map<String, Object> definition,
-        Map<String, Object> learningItems,
-        Integer maxScore,
-        Boolean requiredForCompletion,
         Integer displayOrder,
         String selectedDifficulty
 ) {

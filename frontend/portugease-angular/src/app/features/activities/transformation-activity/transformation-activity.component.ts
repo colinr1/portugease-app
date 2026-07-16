@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ActivityAnswerSubmitted,
-  ActivityContent
+  ActivityContent,
+  SentenceTransformationDefinition
 } from '../../../core/models/activity.model';
+import { isSentenceTransformationDefinition } from '../../../core/utils/activity-definition.util';
 
 @Component({
   selector: 'app-transformation-activity',
@@ -12,7 +14,7 @@ import {
   templateUrl: './transformation-activity.component.html',
   styleUrl: './transformation-activity.component.scss'
 })
-export class TransformationActivityComponent {
+export class TransformationActivityComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
   @Input() disabled = false;
 
@@ -20,12 +22,18 @@ export class TransformationActivityComponent {
 
   answerText = '';
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activity']) {
+      this.answerText = '';
+    }
+  }
+
   get prompt(): string {
-    return String(this.activity.definition['prompt'] ?? '');
+    return this.definition?.prompt ?? '';
   }
 
   get sourceSentence(): string {
-    return String(this.activity.definition['sourceSentence'] ?? '');
+    return this.definition?.sourceSentence ?? '';
   }
 
   submit(): void {
@@ -38,5 +46,11 @@ export class TransformationActivityComponent {
         text: this.answerText.trim()
       }
     });
+  }
+
+  private get definition(): SentenceTransformationDefinition | null {
+    return isSentenceTransformationDefinition(this.activity.definition)
+      ? this.activity.definition
+      : null;
   }
 }

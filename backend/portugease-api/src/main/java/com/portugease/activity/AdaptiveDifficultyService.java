@@ -7,7 +7,6 @@ import com.portugease.user.User;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public class AdaptiveDifficultyService {
             return normal;
         }
 
-        return activity.getDefinitionJson();
+        return Map.of();
     }
 
     public DifficultyUpdateResult updateDifficultyAfterCompletedAttempt(

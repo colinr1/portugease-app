@@ -1,6 +1,7 @@
 package com.portugease.lesson;
 
 import com.portugease.activity.Activity;
+import com.portugease.activity.ActivityDefinitionSanitizer;
 import com.portugease.activity.ActivityRepository;
 import com.portugease.activity.AdaptiveDifficultyService;
 import com.portugease.activity.dto.ActivityContentResponse;
@@ -38,6 +39,7 @@ public class LessonContentService {
     private final DemoUserService demoUserService;
     private final LearnerLocationProgressRepository learnerLocationProgressRepository;
     private final AdaptiveDifficultyService adaptiveDifficultyService;
+    private final ActivityDefinitionSanitizer activityDefinitionSanitizer;
     private final UserRepository userRepository;
 
     public LessonContentService(
@@ -47,6 +49,7 @@ public class LessonContentService {
             DemoUserService demoUserService,
             LearnerLocationProgressRepository learnerLocationProgressRepository,
             AdaptiveDifficultyService adaptiveDifficultyService,
+            ActivityDefinitionSanitizer activityDefinitionSanitizer,
             UserRepository userRepository
     ) {
         this.locationRepository = locationRepository;
@@ -55,6 +58,7 @@ public class LessonContentService {
         this.demoUserService = demoUserService;
         this.learnerLocationProgressRepository = learnerLocationProgressRepository;
         this.adaptiveDifficultyService = adaptiveDifficultyService;
+        this.activityDefinitionSanitizer = activityDefinitionSanitizer;
         this.userRepository = userRepository;
     }
 
@@ -115,15 +119,11 @@ public class LessonContentService {
 
         return new ActivityContentResponse(
                 activity.getId(),
-                activity.getLocation().getId(),
                 activity.getActivityKey(),
                 activity.getActivityType(),
                 activity.getTitle(),
                 activity.getInstructions(),
-                selectedDefinition,
-                activity.getLearningItemsJson(),
-                activity.getMaxScore(),
-                activity.getRequiredForCompletion(),
+                activityDefinitionSanitizer.sanitize(activity.getActivityType(), selectedDefinition),
                 activity.getDisplayOrder(),
                 selectedDifficulty.name()
         );

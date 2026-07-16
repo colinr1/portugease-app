@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import {
   ActivityAnswerSubmitted,
   ActivityContent,
+  MultipleChoiceDefinition,
   MultipleChoiceOption
 } from '../../../core/models/activity.model';
+import { isMultipleChoiceDefinition } from '../../../core/utils/activity-definition.util';
 
 @Component({
   selector: 'app-multiple-choice-activity',
@@ -12,7 +14,7 @@ import {
   templateUrl: './multiple-choice-activity.component.html',
   styleUrl: './multiple-choice-activity.component.scss'
 })
-export class MultipleChoiceActivityComponent {
+export class MultipleChoiceActivityComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
   @Input() disabled = false;
 
@@ -20,12 +22,18 @@ export class MultipleChoiceActivityComponent {
 
   selectedOptionId = '';
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activity']) {
+      this.selectedOptionId = '';
+    }
+  }
+
   get question(): string {
-    return String(this.activity.definition['question'] ?? '');
+    return this.definition?.question ?? '';
   }
 
   get options(): MultipleChoiceOption[] {
-    return (this.activity.definition['options'] as MultipleChoiceOption[]) ?? [];
+    return this.definition?.options ?? [];
   }
 
   submit(): void {
@@ -38,5 +46,11 @@ export class MultipleChoiceActivityComponent {
         selectedOptionId: this.selectedOptionId
       }
     });
+  }
+
+  private get definition(): MultipleChoiceDefinition | null {
+    return isMultipleChoiceDefinition(this.activity.definition)
+      ? this.activity.definition
+      : null;
   }
 }

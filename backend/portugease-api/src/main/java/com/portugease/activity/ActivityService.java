@@ -11,9 +11,14 @@ import java.util.List;
 public class ActivityService {
 
     private final ActivityRepository activityRepository;
+    private final ActivityDefinitionSanitizer activityDefinitionSanitizer;
 
-    public ActivityService(ActivityRepository activityRepository) {
+    public ActivityService(
+            ActivityRepository activityRepository,
+            ActivityDefinitionSanitizer activityDefinitionSanitizer
+    ) {
         this.activityRepository = activityRepository;
+        this.activityDefinitionSanitizer = activityDefinitionSanitizer;
     }
 
     @Transactional(readOnly = true)
@@ -35,15 +40,12 @@ public class ActivityService {
     private ActivityResponse toResponse(Activity activity) {
         return new ActivityResponse(
                 activity.getId(),
-                activity.getLocation().getId(),
                 activity.getActivityKey(),
                 activity.getActivityType(),
                 activity.getTitle(),
                 activity.getInstructions(),
-                activity.getDefinitionJson(),
-                activity.getLearningItemsJson(),
-                activity.getMaxScore(),
-                activity.getRequiredForCompletion()
+                activityDefinitionSanitizer.sanitize(activity.getActivityType(), activity.getNormalDefinitionJson()),
+                activity.getDisplayOrder()
         );
     }
 }

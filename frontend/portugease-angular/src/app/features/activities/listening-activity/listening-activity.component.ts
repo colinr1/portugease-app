@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ActivityAnswerSubmitted,
-  ActivityContent
+  ActivityContent,
+  ListeningDefinition
 } from '../../../core/models/activity.model';
+import { isListeningDefinition } from '../../../core/utils/activity-definition.util';
 import { AudioPlayerComponent } from '../../../shared/components/audio-player/audio-player.component';
 
 @Component({
@@ -13,7 +15,7 @@ import { AudioPlayerComponent } from '../../../shared/components/audio-player/au
   templateUrl: './listening-activity.component.html',
   styleUrl: './listening-activity.component.scss'
 })
-export class ListeningActivityComponent {
+export class ListeningActivityComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
   @Input() disabled = false;
 
@@ -21,13 +23,14 @@ export class ListeningActivityComponent {
 
   answerText = '';
 
-  get audioUrl(): string {
-    return String(this.activity.definition['audioUrl'] ?? '');
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activity']) {
+      this.answerText = '';
+    }
   }
 
-  get transcript(): string | null {
-    const transcript = this.activity.definition['transcript'];
-    return transcript == null ? null : String(transcript);
+  get audioUrl(): string {
+    return this.definition?.audioUrl ?? '';
   }
 
   submit(): void {
@@ -40,5 +43,11 @@ export class ListeningActivityComponent {
         text: this.answerText.trim()
       }
     });
+  }
+
+  private get definition(): ListeningDefinition | null {
+    return isListeningDefinition(this.activity.definition)
+      ? this.activity.definition
+      : null;
   }
 }

@@ -18,17 +18,20 @@ public class ActivityContentService {
     private final ActivityRepository activityRepository;
     private final DemoUserService demoUserService;
     private final AdaptiveDifficultyService adaptiveDifficultyService;
+    private final ActivityDefinitionSanitizer activityDefinitionSanitizer;
     private final UserRepository userRepository;
 
     public ActivityContentService(
             ActivityRepository activityRepository,
             DemoUserService demoUserService,
             AdaptiveDifficultyService adaptiveDifficultyService,
+            ActivityDefinitionSanitizer activityDefinitionSanitizer,
             UserRepository userRepository
     ) {
         this.activityRepository = activityRepository;
         this.demoUserService = demoUserService;
         this.adaptiveDifficultyService = adaptiveDifficultyService;
+        this.activityDefinitionSanitizer = activityDefinitionSanitizer;
         this.userRepository = userRepository;
     }
 
@@ -51,15 +54,11 @@ public class ActivityContentService {
 
         return new ActivityContentResponse(
                 activity.getId(),
-                activity.getLocation().getId(),
                 activity.getActivityKey(),
                 activity.getActivityType(),
                 activity.getTitle(),
                 activity.getInstructions(),
-                selectedDefinition,
-                activity.getLearningItemsJson(),
-                activity.getMaxScore(),
-                activity.getRequiredForCompletion(),
+                activityDefinitionSanitizer.sanitize(activity.getActivityType(), selectedDefinition),
                 activity.getDisplayOrder(),
                 selectedDifficulty.name()
         );

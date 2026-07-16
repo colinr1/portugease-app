@@ -7,14 +7,11 @@ import java.util.UUID;
 
 public record ActivityResponse(
         UUID id,
-        UUID locationId,
         String activityKey,
         ActivityType activityType,
         String title,
         String instructions,
-        Map<String, Object> definitionJson,
-        Map<String, Object> learningItemsJson,
-        Integer maxScore,
-        Boolean requiredForCompletion
+        Map<String, Object> definition,
+        Integer displayOrder
 ) {
 }

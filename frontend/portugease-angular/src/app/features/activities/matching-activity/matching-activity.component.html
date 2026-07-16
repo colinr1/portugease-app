@@ -1,15 +1,15 @@
 <section class="activity-form">
-  @for (pair of pairs; track $index) {
+  @for (leftItem of leftItems; track $index) {
     <div class="match-row">
-      <strong>{{ pair.left }}</strong>
+      <strong>{{ leftItem }}</strong>
 
       <select
-        [(ngModel)]="answers[pair.left]"
+        [(ngModel)]="answers[leftItem]"
         [disabled]="disabled"
-        [attr.aria-label]="'Choose match for ' + pair.left"
+        [attr.aria-label]="'Choose match for ' + leftItem"
       >
         <option value="">Choose match</option>
-        @for (option of rightOptions; track $index) {
+        @for (option of rightItems; track $index) {
           <option [value]="option">
             {{ option }}
           </option>

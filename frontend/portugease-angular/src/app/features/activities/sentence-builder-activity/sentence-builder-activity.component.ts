@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import {
   ActivityAnswerSubmitted,
-  ActivityContent
+  ActivityContent,
+  SentenceBuildingDefinition
 } from '../../../core/models/activity.model';
+import { isSentenceBuildingDefinition } from '../../../core/utils/activity-definition.util';
 
 @Component({
   selector: 'app-sentence-builder-activity',
@@ -28,7 +30,7 @@ export class SentenceBuilderActivityComponent implements OnChanges {
   }
 
   get originalTokens(): string[] {
-    return (this.activity.definition['tokens'] as string[]) ?? [];
+    return this.definition?.tokens ?? [];
   }
 
   addToken(token: string): void {
@@ -94,5 +96,11 @@ export class SentenceBuilderActivityComponent implements OnChanges {
   private arraysEqual(first: string[], second: string[]): boolean {
     return first.length === second.length &&
       first.every((value, index) => value === second[index]);
+  }
+
+  private get definition(): SentenceBuildingDefinition | null {
+    return isSentenceBuildingDefinition(this.activity.definition)
+      ? this.activity.definition
+      : null;
   }
 }

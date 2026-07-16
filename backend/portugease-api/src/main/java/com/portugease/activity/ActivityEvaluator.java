@@ -61,13 +61,23 @@ public class ActivityEvaluator {
         String selectedAnswer = getString(submittedAnswer, "selectedAnswer");
 
         List<Map<String, Object>> options = getListOfMaps(definition.get("options"));
+        String correctOptionId = getString(definition, "correctOptionId");
 
+        if (correctOptionId == null) {
+            correctOptionId = options.stream()
+                    .filter(option -> Boolean.TRUE.equals(option.get("isCorrect")))
+                    .map(option -> getString(option, "id"))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        String finalCorrectOptionId = correctOptionId;
         boolean correct = options.stream().anyMatch(option -> {
-            boolean isCorrect = Boolean.TRUE.equals(option.get("isCorrect"));
             String optionId = getString(option, "id");
             String optionText = getString(option, "text");
 
-            return isCorrect &&
+            return Objects.equals(optionId, finalCorrectOptionId) &&
                     (
                             Objects.equals(optionId, selectedOptionId)
                                     || normalise(optionText).equals(normalise(selectedAnswer))
@@ -79,8 +89,8 @@ public class ActivityEvaluator {
                 correct,
                 correct ? "Correct answer." : "That answer is not correct yet.",
                 correct
-                        ? getStringOrDefault(definition, "feedbackCorrect", "Correct.")
-                        : getStringOrDefault(definition, "feedbackIncorrect", "Review the prompt and try again.")
+                        ? "You selected the correct answer."
+                        : "Review the prompt and try again."
         );
     }
 
@@ -200,6 +210,7 @@ public class ActivityEvaluator {
             Map<String, Object> submittedAnswer
     ) {
         String selectedOptionId = getString(submittedAnswer, "selectedOptionId");
+        String selectedAnswer = getString(submittedAnswer, "selectedAnswer");
         String correctOptionId = getString(definition, "correctOptionId");
 
         if (correctOptionId == null) {
@@ -212,7 +223,15 @@ public class ActivityEvaluator {
                     .orElse(null);
         }
 
-        boolean correct = Objects.equals(selectedOptionId, correctOptionId);
+        String finalCorrectOptionId = correctOptionId;
+        boolean correct = Objects.equals(selectedOptionId, finalCorrectOptionId);
+        if (!correct && selectedAnswer != null) {
+            correct = getListOfMaps(definition.get("options")).stream()
+                    .filter(option -> Objects.equals(getString(option, "id"), finalCorrectOptionId))
+                    .map(option -> getString(option, "text"))
+                    .filter(Objects::nonNull)
+                    .anyMatch(optionText -> normalise(optionText).equals(normalise(selectedAnswer)));
+        }
 
         return result(
                 activity,
@@ -272,10 +291,6 @@ public class ActivityEvaluator {
 
     private String getString(Map<String, Object> map, String key) {
         return JsonValueReader.getString(map, key);
-    }
-
-    private String getStringOrDefault(Map<String, Object> map, String key, String fallback) {
-        return JsonValueReader.getStringOrDefault(map, key, fallback);
     }
 
     private List<Map<String, Object>> getListOfMaps(Object value) {

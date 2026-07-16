@@ -7,7 +7,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,14 +34,6 @@ public class Activity {
 
     @Column(columnDefinition = "text")
     private String instructions;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "definition_json", nullable = false, columnDefinition = "jsonb")
-    private Map<String, Object> definitionJson = new HashMap<>();
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "learning_items_json", nullable = false, columnDefinition = "jsonb")
-    private Map<String, Object> learningItemsJson = new HashMap<>();
 
     @Column(name = "max_score", nullable = false)
     private Integer maxScore = 1;
@@ -99,14 +90,6 @@ public class Activity {
 
     public String getInstructions() {
         return instructions;
-    }
-
-    public Map<String, Object> getDefinitionJson() {
-        return definitionJson;
-    }
-
-    public Map<String, Object> getLearningItemsJson() {
-        return learningItemsJson;
     }
 
     public Integer getMaxScore() {
@@ -167,14 +150,6 @@ public class Activity {
 
     public void setInstructions(String instructions) {
         this.instructions = instructions;
-    }
-
-    public void setDefinitionJson(Map<String, Object> definitionJson) {
-        this.definitionJson = definitionJson;
-    }
-
-    public void setLearningItemsJson(Map<String, Object> learningItemsJson) {
-        this.learningItemsJson = learningItemsJson;
     }
 
     public void setMaxScore(Integer maxScore) {

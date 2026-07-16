@@ -1,10 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ActivityAnswerSubmitted,
   ActivityContent,
-  WordMatchPair
+  WordMatchingDefinition,
+  WordMatchSelection
 } from '../../../core/models/activity.model';
+import { isWordMatchingDefinition } from '../../../core/utils/activity-definition.util';
 
 @Component({
   selector: 'app-matching-activity',
@@ -13,7 +15,7 @@ import {
   templateUrl: './matching-activity.component.html',
   styleUrl: './matching-activity.component.scss'
 })
-export class MatchingActivityComponent {
+export class MatchingActivityComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
   @Input() disabled = false;
 
@@ -21,16 +23,23 @@ export class MatchingActivityComponent {
 
   answers: Record<string, string> = {};
 
-  get pairs(): WordMatchPair[] {
-    return (this.activity.definition['pairs'] as WordMatchPair[]) ?? [];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activity']) {
+      this.answers = {};
+    }
   }
 
-  get rightOptions(): string[] {
-    return [...this.pairs.map(pair => pair.right)].sort();
+  get leftItems(): string[] {
+    return this.definition?.leftItems ?? [];
+  }
+
+  get rightItems(): string[] {
+    return this.definition?.rightItems ?? [];
   }
 
   get allAnswered(): boolean {
-    return this.pairs.every(pair => Boolean(this.answers[pair.left]));
+    return this.leftItems.length > 0 &&
+      this.leftItems.every(left => Boolean(this.answers[left]));
   }
 
   submit(): void {
@@ -38,9 +47,9 @@ export class MatchingActivityComponent {
       return;
     }
 
-    const matches = Object.entries(this.answers).map(([left, right]) => ({
+    const matches: WordMatchSelection[] = this.leftItems.map(left => ({
       left,
-      right
+      right: this.answers[left]
     }));
 
     this.answerSubmitted.emit({
@@ -48,5 +57,11 @@ export class MatchingActivityComponent {
         matches
       }
     });
+  }
+
+  private get definition(): WordMatchingDefinition | null {
+    return isWordMatchingDefinition(this.activity.definition)
+      ? this.activity.definition
+      : null;
   }
 }
