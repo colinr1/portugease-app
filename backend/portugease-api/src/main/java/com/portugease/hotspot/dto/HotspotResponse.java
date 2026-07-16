@@ -10,14 +10,12 @@ public record HotspotResponse(
         String label,
         Double xPercent,
         Double yPercent,
-        String iconAssetKey,
         Boolean visible,
         String activityKey,
         UUID activityId,
         ActivityType activityType,
 
         String hotspotType,
-        String style,
         String dialogueId,
         String ariaLabel,
 

@@ -10,9 +10,7 @@ public record LocationMenuItemResponse(
         UUID cityId,
         String name,
         String slug,
-        String description,
         Integer displayOrder,
-        Integer estimatedMinutes,
         AssetMetadataResponse backgroundImage,
         LocationStatus status
 ) {

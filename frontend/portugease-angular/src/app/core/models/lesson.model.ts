@@ -3,23 +3,17 @@ import { Hotspot } from './hotspot.model';
 import { ActivityContent } from './activity.model';
 
 export interface IntroDialogueLine {
-  id: string;
   speaker?: string;
   portugueseText: string;
   englishTranslation: string;
   audioPath?: string;
-  targetLearningItemKeys?: string[];
   focusMarkers?: IntroDialogueFocusMarker[];
 }
 
 export interface IntroDialogue {
   id: string;
-  title: string;
-  description?: string;
   autoOpenOnFirstVisit: boolean;
   alreadySeen: boolean;
-  hotspotId: string;
-  targetLearningItemKeys: string[];
   lines: IntroDialogueLine[];
 }
 
@@ -28,8 +22,6 @@ export interface LessonSummary {
   locationId: string;
   title: string;
   slug: string;
-  description?: string | null;
-  estimatedMinutes?: number | null;
 }
 
 export interface LessonDetail {
@@ -38,8 +30,6 @@ export interface LessonDetail {
   cityId: string;
   title: string;
   slug: string;
-  description?: string | null;
-  estimatedMinutes?: number | null;
   backgroundImage?: AssetMetadata | null;
   content: Record<string, unknown>;
   hotspots: Hotspot[];

@@ -14,8 +14,6 @@ public record LessonDetailResponse(
         UUID cityId,
         String title,
         String slug,
-        String description,
-        Integer estimatedMinutes,
         AssetMetadataResponse backgroundImage,
         Map<String, Object> content,
         List<HotspotResponse> hotspots,

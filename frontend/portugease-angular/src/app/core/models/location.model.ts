@@ -7,9 +7,7 @@ export interface LocationMenuItem {
   cityId: string;
   name: string;
   slug: string;
-  description?: string | null;
   displayOrder: number;
-  estimatedMinutes?: number | null;
   backgroundImage?: AssetMetadata | null;
   status: LocationStatus;
 }

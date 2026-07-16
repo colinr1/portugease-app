@@ -13,18 +13,7 @@ export type HotspotType =
   | 'CHARACTER'
   | string;
 
-export type HotspotStyle =
-  | 'INTRO_DIALOGUE'
-  | 'VOCAB_TOOLTIP'
-  | 'ACTIVITY'
-  | 'MATCHING'
-  | 'VOCABULARY'
-  | 'DIALOGUE'
-  | 'AUDIO'
-  | string;
-
 export interface VocabularyTooltipContent {
-  itemKey: string;
   portugueseText: string;
   englishTranslation: string;
   audioPath?: string | null;
@@ -36,7 +25,6 @@ export interface Hotspot {
   xPercent: number;
   yPercent: number;
 
-  iconAssetKey?: string | null;
   iconUrl?: string | null;
 
   visible: boolean;
@@ -46,7 +34,6 @@ export interface Hotspot {
   activityType?: ActivityType | null;
 
   hotspotType?: HotspotType | null;
-  style?: HotspotStyle | null;
   dialogueId?: string | null;
   ariaLabel?: string | null;
 

@@ -57,14 +57,12 @@ public class HotspotMapper {
                 getString(rawHotspot, "label"),
                 getDouble(rawHotspot, "xPercent"),
                 getDouble(rawHotspot, "yPercent"),
-                getString(rawHotspot, "iconAssetKey"),
                 getBooleanOrDefault(rawHotspot, "visible", true),
                 activityKey,
                 activity != null ? activity.getId() : null,
                 activity != null ? activity.getActivityType() : null,
 
                 getString(rawHotspot, "hotspotType"),
-                getString(rawHotspot, "style"),
                 getString(rawHotspot, "dialogueId"),
                 getString(rawHotspot, "ariaLabel"),
 

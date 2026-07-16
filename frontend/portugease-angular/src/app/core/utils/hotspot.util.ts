@@ -28,10 +28,5 @@ function hasHotspotMarkerType(
   hotspot: Hotspot,
   markerType: HotspotMarkerType
 ): boolean {
-  return (
-    hotspot.hotspotType === markerType ||
-    hotspot.style === markerType ||
-    hotspot.raw?.['hotspotType'] === markerType ||
-    hotspot.raw?.['style'] === markerType
-  );
+  return hotspot.hotspotType === markerType;
 }

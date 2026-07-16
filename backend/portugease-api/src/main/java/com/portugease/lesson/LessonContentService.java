@@ -85,8 +85,6 @@ public class LessonContentService {
                 location.getCity().getId(),
                 getLessonTitle(location),
                 location.getSlug(),
-                location.getDescription(),
-                location.getEstimatedMinutes(),
                 toAsset(location.getBackgroundAsset()),
                 location.getContentJson(),
                 hotspots,
@@ -150,12 +148,8 @@ public class LessonContentService {
 
         return new IntroDialogueResponse(
                 valueAsString(rawIntroDialogue.get("id")),
-                valueAsString(rawIntroDialogue.get("title")),
-                valueAsString(rawIntroDialogue.get("description")),
                 valueAsBoolean(rawIntroDialogue.get("autoOpenOnFirstVisit")),
                 alreadySeen,
-                valueAsString(rawIntroDialogue.get("hotspotId")),
-                valueAsStringList(rawIntroDialogue.get("targetLearningItemKeys")),
                 extractDialogueLines(rawIntroDialogue.get("lines"))
         );
     }
@@ -173,12 +167,10 @@ public class LessonContentService {
             }
 
             lines.add(new IntroDialogueLineResponse(
-                    valueAsString(rawLine.get("id")),
                     valueAsString(rawLine.get("speaker")),
                     valueAsString(rawLine.get("portugueseText")),
                     valueAsString(rawLine.get("englishTranslation")),
                     valueAsString(rawLine.get("audioPath")),
-                    valueAsStringList(rawLine.get("targetLearningItemKeys")),
                     extractFocusMarkers(rawLine.get(("focusMarkers")))
             ));
         }
@@ -234,9 +226,5 @@ public class LessonContentService {
 
     private Boolean valueAsBoolean(Object value) {
         return JsonValueReader.asBoolean(value);
-    }
-
-    private List<String> valueAsStringList(Object value) {
-        return JsonValueReader.asStringList(value);
     }
 }

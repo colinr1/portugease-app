@@ -84,9 +84,7 @@ public class LocationContentService {
                 location.getCity().getSlug(),
                 location.getName(),
                 location.getSlug(),
-                location.getDescription(),
                 location.getDisplayOrder(),
-                location.getEstimatedMinutes(),
                 getLocationStatus(user, location),
                 toAsset(location.getBackgroundAsset()),
                 location.getContentJson(),
@@ -104,9 +102,7 @@ public class LocationContentService {
                         location.getId(),
                         location.getId(),
                         getLessonTitle(location),
-                        location.getSlug(),
-                        location.getDescription(),
-                        location.getEstimatedMinutes()
+                        location.getSlug()
                 )
         );
     }
@@ -208,9 +204,7 @@ public class LocationContentService {
                 location.getCity().getId(),
                 location.getName(),
                 location.getSlug(),
-                location.getDescription(),
                 location.getDisplayOrder(),
-                location.getEstimatedMinutes(),
                 toAsset(location.getBackgroundAsset()),
                 status
         );

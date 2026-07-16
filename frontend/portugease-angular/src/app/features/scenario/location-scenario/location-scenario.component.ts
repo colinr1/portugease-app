@@ -220,7 +220,6 @@ export class LocationScenarioComponent implements OnChanges {
       activityKey: activity.activityKey,
       activityType: activity.activityType,
       hotspotType: 'ACTIVITY',
-      style: 'ACTIVITY',
       ariaLabel: `Open ${activity.title} activity`
     };
   }

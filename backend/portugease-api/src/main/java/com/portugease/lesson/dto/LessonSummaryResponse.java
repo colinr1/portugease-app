@@ -6,8 +6,6 @@ public record LessonSummaryResponse(
         UUID id,
         UUID locationId,
         String title,
-        String slug,
-        String description,
-        Integer estimatedMinutes
+        String slug
 ) {
 }
