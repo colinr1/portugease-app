@@ -1,5 +1,17 @@
 <section class="activity-form">
-  <app-audio-player [src]="audioUrl"></app-audio-player>
+  @if (hasPlayableAudio) {
+    <button
+      type="button"
+      class="audio-button"
+      (click)="playAudio()"
+    >
+      Play audio
+    </button>
+  } @else {
+    <p class="audio-unavailable" role="status">
+      Audio is unavailable for this activity.
+    </p>
+  }
 
   <label>
     What did you hear?

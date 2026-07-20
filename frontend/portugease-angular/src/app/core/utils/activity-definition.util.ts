@@ -80,7 +80,9 @@ export function isSentenceBuildingDefinition(
 export function isListeningDefinition(
   definition: unknown
 ): definition is ListeningDefinition {
-  return isDefinitionRecord(definition) && typeof definition['audioUrl'] === 'string';
+  return isDefinitionRecord(definition) &&
+    (definition['audioUrl'] === undefined || typeof definition['audioUrl'] === 'string') &&
+    (definition['correctAnswer'] === undefined || typeof definition['correctAnswer'] === 'string');
 }
 
 export function isWordMatchingDefinition(

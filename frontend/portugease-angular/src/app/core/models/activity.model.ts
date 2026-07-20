@@ -40,7 +40,8 @@ export interface SentenceBuildingDefinition extends ActivityDefinitionBase {
 }
 
 export interface ListeningDefinition extends ActivityDefinitionBase {
-  audioUrl: string;
+  audioUrl?: string;
+  correctAnswer?: string;
 }
 
 export interface WordMatchingDefinition extends ActivityDefinitionBase {

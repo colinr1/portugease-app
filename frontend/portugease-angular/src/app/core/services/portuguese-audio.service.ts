@@ -42,35 +42,14 @@ export class PortugueseAudioService implements OnDestroy {
           return;
         }
 
-        const finishFallback = (): void => {
-          if (
-            fallbackStarted ||
-            this.currentAudio !== audio ||
-            this.playbackRequestId !== playbackRequestId
-          ) {
-            return;
-          }
+        fallbackStarted = true;
+        this.currentAudio = undefined;
 
-          fallbackStarted = true;
-          this.currentAudio = undefined;
-
-          if (markAudioUnavailable) {
-            this.unavailableAudioSources.add(normalizedAudioSource);
-          }
-
-          this.speak(text, playbackRequestId);
-        };
-
-        if (!markAudioUnavailable) {
-          finishFallback();
-          return;
+        if (markAudioUnavailable) {
+          this.unavailableAudioSources.add(normalizedAudioSource);
         }
 
-        this.isAudioSourceUnavailable(normalizedAudioSource).then(unavailable => {
-          if (unavailable) {
-            finishFallback();
-          }
-        });
+        this.speak(text, playbackRequestId);
       };
 
       audio.addEventListener('error', () => {
@@ -172,18 +151,5 @@ export class PortugueseAudioService implements OnDestroy {
 
   private isPlaybackBlocked(error: unknown): boolean {
     return error instanceof DOMException && error.name === 'NotAllowedError';
-  }
-
-  private async isAudioSourceUnavailable(audioSource: string): Promise<boolean> {
-    try {
-      const response = await fetch(audioSource, {
-        method: 'HEAD',
-        cache: 'no-store'
-      });
-
-      return !response.ok;
-    } catch {
-      return false;
-    }
   }
 }
