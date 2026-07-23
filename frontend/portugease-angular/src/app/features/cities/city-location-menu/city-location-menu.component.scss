@@ -57,7 +57,15 @@
     font-size: 0.8rem;
   }
 
-  strong {
+  .status-completed {
     color: var(--color-green);
+  }
+
+  .status-locked {
+    color: var(--color-error);
+  }
+
+  .status-unlocked {
+    color: var(--color-blue);
   }
 }

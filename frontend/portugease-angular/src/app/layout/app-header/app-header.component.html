@@ -1,9 +1,44 @@
 <header class="app-header">
-  <a routerLink="/" class="brand">
+  <a routerLink="/" class="brand" aria-label="Go to map">
     <img src="/assets/images/logo/logo-no-background-cropped.svg" alt="PortugEase logo">
   </a>
 
-  <nav>
-    <a routerLink="/">Map</a>
-  </nav>
+  @if (showMapLink()) {
+    <nav
+      aria-label="Page navigation"
+      [class.nav--has-city]="showCityLink()"
+    >
+      <a routerLink="/" class="nav-link nav-link--map">
+        <svg
+          class="nav-link__icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"></path>
+          <path d="M9 3v15M15 6v15"></path>
+        </svg>
+        <span class="nav-link__label">Map</span>
+      </a>
+
+      @if (showCityLink() && cityLink(); as city) {
+        <a
+          class="nav-link nav-link--city"
+          [routerLink]="['/cities', city.citySlug]"
+          [attr.aria-label]="'Go to ' + city.cityName + ' city page'"
+        >
+          <svg
+            class="nav-link__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+            <circle cx="12" cy="10" r="2.5"></circle>
+          </svg>
+          <span class="nav-link__label">{{ city.cityName }}</span>
+        </a>
+      }
+    </nav>
+  }
 </header>

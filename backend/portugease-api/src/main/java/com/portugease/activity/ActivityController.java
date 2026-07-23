@@ -43,13 +43,19 @@ public class ActivityController {
     }
 
     @GetMapping("/by-key/{activityKey}")
-    public ActivityResponse getActivityByKey(@PathVariable String activityKey) {
-        return activityService.getActivityByKey(activityKey);
+    public ActivityResponse getActivityByKey(
+            @PathVariable String activityKey,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return activityService.getActivityByKey(activityKey, userId);
     }
 
     @GetMapping
-    public List<ActivityResponse> getActivitiesForLocation(@RequestParam String locationSlug) {
-        return activityService.getActivitiesForLocation(locationSlug);
+    public List<ActivityResponse> getActivitiesForLocation(
+            @RequestParam String locationSlug,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return activityService.getActivitiesForLocation(locationSlug, userId);
     }
 
     @PostMapping("/{activityId}/attempts")

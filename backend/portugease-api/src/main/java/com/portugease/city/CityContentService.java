@@ -12,6 +12,7 @@ import com.portugease.common.json.JsonValueReader;
 import com.portugease.location.LocationContentService;
 import com.portugease.location.dto.LocationMenuItemResponse;
 import com.portugease.progress.LearnerCityProgressRepository;
+import com.portugease.progress.ProgressionService;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
 import com.portugease.user.UserRepository;
@@ -30,24 +31,28 @@ public class CityContentService {
     private final DemoUserService demoUserService;
     private final UserRepository userRepository;
     private final LocationContentService locationContentService;
+    private final ProgressionService progressionService;
 
     public CityContentService(
             CityRepository cityRepository,
             LearnerCityProgressRepository learnerCityProgressRepository,
             DemoUserService demoUserService,
             UserRepository userRepository,
-            LocationContentService locationContentService
+            LocationContentService locationContentService,
+            ProgressionService progressionService
     ) {
         this.cityRepository = cityRepository;
         this.learnerCityProgressRepository = learnerCityProgressRepository;
         this.demoUserService = demoUserService;
         this.userRepository = userRepository;
         this.locationContentService = locationContentService;
+        this.progressionService = progressionService;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<CityListItemResponse> getCities(UUID userId) {
         User user = resolveUser(userId);
+        progressionService.ensureInitialProgress(user);
 
         return cityRepository.findAllByActiveTrueOrderByDisplayOrderAsc()
                 .stream()
@@ -55,12 +60,26 @@ public class CityContentService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public CityDetailResponse getCity(UUID cityId, UUID userId) {
         User user = resolveUser(userId);
-
         City city = cityRepository.findById(cityId)
                 .orElseThrow(() -> new ResourceNotFoundException("City not found: " + cityId));
+
+        return getCity(city, user);
+    }
+
+    @Transactional
+    public CityDetailResponse getCityBySlug(String citySlug, UUID userId) {
+        User user = resolveUser(userId);
+        City city = cityRepository.findBySlug(citySlug)
+                .orElseThrow(() -> new ResourceNotFoundException("City not found: " + citySlug));
+
+        return getCity(city, user);
+    }
+
+    private CityDetailResponse getCity(City city, User user) {
+        progressionService.assertCityUnlocked(user, city);
 
         List<LocationMenuItemResponse> locations =
                 locationContentService.getLocationMenuForCity(city.getId(), user.getId());
@@ -79,13 +98,12 @@ public class CityContentService {
         );
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LocationMenuItemResponse> getCityLocations(UUID cityId, UUID userId) {
-        if (!cityRepository.existsById(cityId)) {
-            throw new ResourceNotFoundException("City not found: " + cityId);
-        }
-
         User user = resolveUser(userId);
+        City city = cityRepository.findById(cityId)
+                .orElseThrow(() -> new ResourceNotFoundException("City not found: " + cityId));
+        progressionService.assertCityUnlocked(user, city);
 
         return locationContentService.getLocationMenuForCity(cityId, user.getId());
     }

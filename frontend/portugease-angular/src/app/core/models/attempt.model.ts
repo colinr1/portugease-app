@@ -15,7 +15,29 @@ export interface ProgressUpdateSummary {
   incorrectAttemptsCount: number;
   bestScore: number;
   maxScore: number;
-  itemMarkedForReview: boolean;
+  completedPerfectly: boolean;
+  incorrectBeforeSuccess: number;
+}
+
+export interface UnlockedLocation {
+  locationId: string;
+  cityId: string;
+  locationSlug: string;
+  locationName: string;
+}
+
+export interface UnlockedCity {
+  cityId: string;
+  citySlug: string;
+  cityName: string;
+  firstUnlockedLocation: UnlockedLocation | null;
+}
+
+export interface ProgressionUpdate {
+  locationCompleted: boolean;
+  unlockedLocation: UnlockedLocation | null;
+  cityCompleted: boolean;
+  unlockedCity: UnlockedCity | null;
 }
 
 export interface ActivityAttemptResponse {
@@ -27,6 +49,7 @@ export interface ActivityAttemptResponse {
   feedbackMessage: string;
   explanation: string;
   progressUpdate: ProgressUpdateSummary;
+  progressionUpdate: ProgressionUpdate;
   adaptiveDifficulty?: AdaptiveDifficultyResponse;
 }
 

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CityApiService } from '../../core/services/city-api.service';
 import { CityDetail } from '../../core/models/city.model';
+import { isLockedContentError } from '../../core/utils/http-error.util';
 import { CityLocationMenuComponent } from '../../features/cities/city-location-menu/city-location-menu.component';
 
 @Component({
   selector: 'app-city-page',
   standalone: true,
-  imports: [CityLocationMenuComponent],
+  imports: [CityLocationMenuComponent, RouterLink],
   templateUrl: './city-page.component.html',
   styleUrl: './city-page.component.scss'
 })
@@ -15,6 +16,7 @@ export class CityPageComponent implements OnInit {
   city?: CityDetail;
   loading = true;
   errorMessage = '';
+  locked = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -22,21 +24,24 @@ export class CityPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cityId = this.route.snapshot.paramMap.get('cityId');
+    const citySlug = this.route.snapshot.paramMap.get('citySlug');
 
-    if (!cityId) {
+    if (!citySlug) {
       this.errorMessage = 'City not found.';
       this.loading = false;
       return;
     }
 
-    this.cityApi.getCity(cityId).subscribe({
+    this.cityApi.getCityBySlug(citySlug).subscribe({
       next: city => {
         this.city = city;
         this.loading = false;
       },
-      error: () => {
-        this.errorMessage = 'Could not load city.';
+      error: (error: unknown) => {
+        this.locked = isLockedContentError(error);
+        this.errorMessage = this.locked
+          ? 'Complete the earlier city activities to unlock this city.'
+          : 'Could not load city.';
         this.loading = false;
       }
     });

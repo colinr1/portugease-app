@@ -26,4 +26,111 @@
     font-weight: 900;
     color: var(--color-black);
   }
+
+  .progression {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(27, 138, 90, 0.4);
+    color: var(--color-black);
+  }
+
+  .progression-heading {
+    margin: 0 0 0.35rem;
+    color: var(--color-blue);
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  .progression-events {
+    display: grid;
+  }
+
+  .progression-event {
+    display: grid;
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0;
+  }
+
+  .progression-event + .progression-event {
+    border-top: 1px solid rgba(23, 23, 23, 0.1);
+  }
+
+  .progression-event.has-action {
+    grid-template-columns: 1.9rem minmax(0, 1fr) auto;
+  }
+
+  .progression-icon {
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 900;
+  }
+
+  .completion-event .progression-icon {
+    background: var(--color-green);
+    color: var(--color-white);
+  }
+
+  .unlock-event .progression-icon {
+    background: var(--color-gold);
+    color: var(--color-black);
+  }
+
+  .event-copy {
+    display: grid;
+    gap: 0.18rem;
+
+    strong {
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+  }
+
+  .event-detail {
+    margin-top: 0.18rem;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .continue-button {
+    align-self: center;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--color-blue);
+    color: var(--color-white);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--color-blue-hover);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .feedback .progression-event {
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+  }
+
+  .feedback .progression-event.has-action {
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+  }
+
+  .feedback .continue-button {
+    grid-column: 2;
+    justify-self: start;
+  }
 }

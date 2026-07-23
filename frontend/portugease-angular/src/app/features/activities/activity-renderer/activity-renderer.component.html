@@ -74,16 +74,32 @@
       }
     }
   } @else {
-    <app-feedback-panel [feedback]="feedback"></app-feedback-panel>
+    <app-feedback-panel
+      [feedback]="feedback"
+      [cityName]="cityName"
+    ></app-feedback-panel>
 
     <div class="feedback-actions">
-      <button type="button" class="secondary-button" (click)="resetActivity()">
-        Try again
-      </button>
+      @if (!feedback?.isCorrect) {
+        <button type="button" class="secondary-button" (click)="resetActivity()">
+          Try again
+        </button>
+      }
 
-      <button type="button" class="primary-button" (click)="returnToScenario()">
+      <button
+        type="button"
+        [class.primary-button]="!hasProgressionAction"
+        [class.secondary-button]="hasProgressionAction"
+        (click)="returnToScenario()"
+      >
         Return to {{ locationName }}
       </button>
+
+      @if (hasProgressionAction) {
+        <button type="button" class="primary-button" (click)="viewProgression()">
+          {{ progressionActionLabel }}
+        </button>
+      }
     </div>
   }
 

@@ -11,12 +11,12 @@ export const routes: Routes = [
     title: 'PortugEase | Brazil Map'
   },
   {
-    path: 'cities/:cityId',
+    path: 'cities/:citySlug',
     component: CityPageComponent,
     title: 'PortugEase | City'
   },
   {
-    path: 'locations/:locationId',
+    path: 'locations/:locationSlug',
     component: LocationPageComponent,
     title: 'PortugEase | Location'
   },

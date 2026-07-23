@@ -19,6 +19,7 @@ import com.portugease.lesson.dto.LessonDetailResponse;
 import com.portugease.location.Location;
 import com.portugease.location.LocationRepository;
 import com.portugease.progress.LearnerLocationProgressRepository;
+import com.portugease.progress.ProgressionService;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
 import com.portugease.user.UserRepository;
@@ -41,6 +42,7 @@ public class LessonContentService {
     private final AdaptiveDifficultyService adaptiveDifficultyService;
     private final ActivityDefinitionSanitizer activityDefinitionSanitizer;
     private final UserRepository userRepository;
+    private final ProgressionService progressionService;
 
     public LessonContentService(
             LocationRepository locationRepository,
@@ -50,7 +52,8 @@ public class LessonContentService {
             LearnerLocationProgressRepository learnerLocationProgressRepository,
             AdaptiveDifficultyService adaptiveDifficultyService,
             ActivityDefinitionSanitizer activityDefinitionSanitizer,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ProgressionService progressionService
     ) {
         this.locationRepository = locationRepository;
         this.activityRepository = activityRepository;
@@ -60,14 +63,28 @@ public class LessonContentService {
         this.adaptiveDifficultyService = adaptiveDifficultyService;
         this.activityDefinitionSanitizer = activityDefinitionSanitizer;
         this.userRepository = userRepository;
+        this.progressionService = progressionService;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LessonDetailResponse getLesson(UUID lessonId, UUID userId) {
         Location location = locationRepository.findById(lessonId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + lessonId));
 
+        return getLesson(location, userId);
+    }
+
+    @Transactional
+    public LessonDetailResponse getLessonByLocationSlug(String locationSlug, UUID userId) {
+        Location location = locationRepository.findBySlug(locationSlug)
+                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found: " + locationSlug));
+
+        return getLesson(location, userId);
+    }
+
+    private LessonDetailResponse getLesson(Location location, UUID userId) {
         User user = resolveUser(userId);
+        progressionService.assertLocationUnlocked(user, location);
 
         List<Activity> activities = activityRepository
                 .findAllByLocationIdAndActiveTrueOrderByDisplayOrderAsc(location.getId());
@@ -87,6 +104,7 @@ public class LessonContentService {
                 location.getId(),
                 location.getId(),
                 location.getCity().getId(),
+                location.getCity().getSlug(),
                 getLessonTitle(location),
                 location.getSlug(),
                 toAsset(location.getBackgroundAsset()),

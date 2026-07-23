@@ -9,5 +9,66 @@
     <p class="score">
       Score: {{ feedback.score }} / {{ feedback.maxScore }}
     </p>
+
+    @if (
+      feedback.progressionUpdate.locationCompleted ||
+      feedback.progressionUpdate.unlockedLocation ||
+      feedback.progressionUpdate.cityCompleted ||
+      feedback.progressionUpdate.unlockedCity
+    ) {
+      <div class="progression" role="status" aria-live="polite" aria-atomic="true">
+        <h4 class="progression-heading">Progress update</h4>
+
+        <div class="progression-events">
+          @if (feedback.progressionUpdate.locationCompleted) {
+            <div class="progression-event completion-event">
+              <span class="progression-icon" aria-hidden="true">✓</span>
+              <div class="event-copy">
+                <strong>Location completed!</strong>
+              </div>
+            </div>
+          }
+
+          @if (feedback.progressionUpdate.unlockedLocation; as unlockedLocation) {
+            <div class="progression-event unlock-event has-action">
+              <span class="progression-icon" aria-hidden="true">✦</span>
+              <div class="event-copy">
+                <strong>{{ unlockedLocation.locationName }} unlocked!</strong>
+              </div>
+              <a
+                class="continue-button"
+                [routerLink]="['/locations', unlockedLocation.locationSlug]"
+              >
+                Continue to {{ unlockedLocation.locationName }}
+              </a>
+            </div>
+          }
+
+          @if (feedback.progressionUpdate.cityCompleted) {
+            <div class="progression-event completion-event">
+              <span class="progression-icon" aria-hidden="true">✓</span>
+              <div class="event-copy">
+                <strong>City completed!</strong>
+              </div>
+            </div>
+          }
+
+          @if (feedback.progressionUpdate.unlockedCity; as unlockedCity) {
+            <div class="progression-event unlock-event">
+              <span class="progression-icon" aria-hidden="true">✦</span>
+              <div class="event-copy">
+                <strong>{{ unlockedCity.cityName }} unlocked!</strong>
+
+                @if (unlockedCity.firstUnlockedLocation; as firstUnlockedLocation) {
+                  <span class="event-detail">
+                    Start at {{ firstUnlockedLocation.locationName }}.
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
   </section>
 }

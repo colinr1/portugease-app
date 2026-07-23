@@ -19,7 +19,11 @@
       <app-activity-renderer
         [activity]="activity"
         [locationName]="locationName"
-        (finished)="close()"
+        [cityName]="cityName"
+        (finished)="finish($event)"
+        (returned)="returned.emit()"
+        (attemptResolved)="attemptResolved.emit($event)"
+        (contentLocked)="contentLocked.emit()"
       ></app-activity-renderer>
     }
 

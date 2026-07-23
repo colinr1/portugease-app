@@ -37,6 +37,14 @@ public class CityController {
         return cityContentService.getCity(cityId, userId);
     }
 
+    @GetMapping("/by-slug/{citySlug}")
+    public CityDetailResponse getCityBySlug(
+            @PathVariable String citySlug,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return cityContentService.getCityBySlug(citySlug, userId);
+    }
+
     @GetMapping("/{cityId}/locations")
     public List<LocationMenuItemResponse> getCityLocations(
             @PathVariable UUID cityId,

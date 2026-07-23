@@ -28,6 +28,7 @@ export interface LessonDetail {
   id: string;
   locationId: string;
   cityId: string;
+  citySlug: string;
   title: string;
   slug: string;
   backgroundImage?: AssetMetadata | null;

@@ -20,6 +20,7 @@ import {
   extractActivityHints,
   normalizeActivityType
 } from '../../../core/utils/activity-definition.util';
+import { isLockedContentError } from '../../../core/utils/http-error.util';
 
 @Component({
   selector: 'app-activity-renderer',
@@ -39,8 +40,12 @@ import {
 export class ActivityRendererComponent implements OnChanges {
   @Input({ required: true }) activity!: ActivityContent;
   @Input() locationName = 'Scenario';
+  @Input() cityName = 'City';
 
-  @Output() finished = new EventEmitter<void>();
+  @Output() finished = new EventEmitter<ActivityAttemptResponse>();
+  @Output() returned = new EventEmitter<void>();
+  @Output() attemptResolved = new EventEmitter<ActivityAttemptResponse>();
+  @Output() contentLocked = new EventEmitter<void>();
 
   submitting = false;
   feedback?: ActivityAttemptResponse;
@@ -80,6 +85,31 @@ export class ActivityRendererComponent implements OnChanges {
     return this.feedback !== undefined;
   }
 
+  get hasProgressionAction(): boolean {
+    const progressionUpdate = this.feedback?.progressionUpdate;
+
+    return Boolean(
+      progressionUpdate?.locationCompleted ||
+      progressionUpdate?.unlockedLocation ||
+      progressionUpdate?.cityCompleted ||
+      progressionUpdate?.unlockedCity
+    );
+  }
+
+  get progressionActionLabel(): string {
+    const progressionUpdate = this.feedback?.progressionUpdate;
+
+    if (progressionUpdate?.unlockedCity || progressionUpdate?.cityCompleted) {
+      return 'View map';
+    }
+
+    if (progressionUpdate?.unlockedLocation || progressionUpdate?.locationCompleted) {
+      return `View ${this.cityName}`;
+    }
+
+    return '';
+  }
+
   onAnswerSubmitted(event: ActivityAnswerSubmitted): void {
     this.submitAnswer(event.submittedAnswer);
   }
@@ -97,6 +127,7 @@ export class ActivityRendererComponent implements OnChanges {
     }).subscribe({
       next: response => {
         this.feedback = response;
+        this.attemptResolved.emit(response);
 
         if (!response.isCorrect) {
           this.registerIncorrectSubmission();
@@ -104,8 +135,13 @@ export class ActivityRendererComponent implements OnChanges {
 
         this.submitting = false;
       },
-      error: () => {
-        this.errorMessage = 'Could not submit answer. Please try again.';
+      error: (error: unknown) => {
+        if (isLockedContentError(error)) {
+          this.contentLocked.emit();
+        } else {
+          this.errorMessage = 'Could not submit answer. Please try again.';
+        }
+
         this.submitting = false;
       }
     });
@@ -117,7 +153,13 @@ export class ActivityRendererComponent implements OnChanges {
   }
 
   returnToScenario(): void {
-    this.finished.emit();
+    this.returned.emit();
+  }
+
+  viewProgression(): void {
+    if (this.feedback) {
+      this.finished.emit(this.feedback);
+    }
   }
 
   private registerIncorrectSubmission(): void {

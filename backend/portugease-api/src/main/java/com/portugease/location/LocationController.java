@@ -39,12 +39,15 @@ public class LocationController {
             @PathVariable UUID locationId,
             @RequestParam(required = false) UUID userId
     ) {
-        return locationContentService.getLessonsForLocation(locationId);
+        return locationContentService.getLessonsForLocation(locationId, userId);
     }
 
     @GetMapping("/{locationId}/hotspots")
-    public List<HotspotResponse> getLocationHotspots(@PathVariable UUID locationId) {
-        return locationContentService.getHotspotsForLocation(locationId);
+    public List<HotspotResponse> getLocationHotspots(
+            @PathVariable UUID locationId,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return locationContentService.getHotspotsForLocation(locationId, userId);
     }
 
     @PostMapping("/{locationId}/intro-dialogue/seen")

@@ -16,20 +16,24 @@ public class ProgressService {
     private final DemoUserService demoUserService;
     private final LearnerCityProgressRepository cityProgressRepository;
     private final LearnerLocationProgressRepository locationProgressRepository;
+    private final ProgressionService progressionService;
 
     public ProgressService(
             DemoUserService demoUserService,
             LearnerCityProgressRepository cityProgressRepository,
-            LearnerLocationProgressRepository locationProgressRepository
+            LearnerLocationProgressRepository locationProgressRepository,
+            ProgressionService progressionService
     ) {
         this.demoUserService = demoUserService;
         this.cityProgressRepository = cityProgressRepository;
         this.locationProgressRepository = locationProgressRepository;
+        this.progressionService = progressionService;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ProgressResponse getDemoProgress() {
         User user = demoUserService.getDemoUser();
+        progressionService.ensureInitialProgress(user);
 
         List<CityProgressResponse> cityProgress = cityProgressRepository.findAllByUser(user)
                 .stream()

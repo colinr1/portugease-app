@@ -1,5 +1,7 @@
 package com.portugease.activity.dto;
 
+import com.portugease.progress.dto.ProgressionUpdateResponse;
+
 import java.util.UUID;
 
 public record ActivityAttemptSubmissionResponse(
@@ -11,6 +13,7 @@ public record ActivityAttemptSubmissionResponse(
         String feedbackMessage,
         String explanation,
         AdaptiveDifficultyResponse adaptiveDifficulty,
-        ProgressUpdateSummaryResponse progressUpdate
+        ProgressUpdateSummaryResponse progressUpdate,
+        ProgressionUpdateResponse progressionUpdate
 ) {
 }

@@ -1,5 +1,7 @@
 package com.portugease.progress;
 
+import com.portugease.city.City;
+import com.portugease.common.enums.LocationStatus;
 import com.portugease.location.Location;
 import com.portugease.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +14,10 @@ public interface LearnerLocationProgressRepository extends JpaRepository<Learner
     Optional<LearnerLocationProgress> findByUserAndLocation(User user, Location location);
 
     List<LearnerLocationProgress> findAllByUser(User user);
+
+    long countByUserAndLocation_CityAndStatusAndLocation_ActiveTrue(
+            User user,
+            City city,
+            LocationStatus status
+    );
 }

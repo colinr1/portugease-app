@@ -25,4 +25,17 @@ export class LessonApiService {
       params
     });
   }
+
+  getLessonByLocationSlug(locationSlug: string): Observable<LessonDetail> {
+    const userId = this.learnerUserService.selectedUserId;
+
+    const params = userId
+      ? new HttpParams().set('userId', userId)
+      : new HttpParams();
+
+    return this.http.get<LessonDetail>(
+      `${API_BASE_URL}/lessons/by-location-slug/${encodeURIComponent(locationSlug)}`,
+      { params }
+    );
+  }
 }

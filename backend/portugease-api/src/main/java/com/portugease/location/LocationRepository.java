@@ -11,7 +11,16 @@ public interface LocationRepository extends JpaRepository<Location, UUID> {
 
     Optional<Location> findBySlug(String slug);
 
+    Optional<Location> findFirstByCityAndActiveTrueOrderByDisplayOrderAsc(City city);
+
+    Optional<Location> findFirstByCityAndActiveTrueAndDisplayOrderGreaterThanOrderByDisplayOrderAsc(
+            City city,
+            Integer displayOrder
+    );
+
     List<Location> findAllByCityAndActiveTrueOrderByDisplayOrderAsc(City city);
 
     List<Location> findAllByCityIdAndActiveTrueOrderByDisplayOrderAsc(UUID cityId);
+
+    long countByCityAndActiveTrue(City city);
 }

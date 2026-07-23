@@ -3,7 +3,8 @@
     <a
       class="location-card"
       [class.locked]="location.status === 'LOCKED'"
-      [routerLink]="location.status === 'LOCKED' ? null : ['/locations', location.id]"
+      [routerLink]="location.status === 'LOCKED' ? null : ['/locations', location.slug]"
+      [state]="{ citySlug: citySlug, cityName: cityName }"
       [attr.aria-disabled]="location.status === 'LOCKED'"
     >
       @if (location.backgroundImage?.filePath) {
@@ -16,9 +17,17 @@
       <div class="content">
         <h2>{{ location.name }}</h2>
 
-        <div class="meta">
-          <strong>{{ location.status }}</strong>
-        </div>
+        @if (location.status !== 'IN_PROGRESS') {
+          <div class="meta">
+            <strong
+              [class.status-completed]="location.status === 'COMPLETED'"
+              [class.status-locked]="location.status === 'LOCKED'"
+              [class.status-unlocked]="location.status === 'UNLOCKED'"
+            >
+              {{ location.status }}
+            </strong>
+          </div>
+        }
       </div>
     </a>
   }

@@ -1,9 +1,16 @@
 @if (loading) {
-  <p>Loading city...</p>
+  <p class="page-message" role="status">Loading city...</p>
 }
 
-@if (errorMessage) {
-  <p>{{ errorMessage }}</p>
+@if (locked) {
+  <section class="page-message locked-message" role="alert" aria-labelledby="locked-city-title">
+    <img class="lock-icon" src="assets/images/icons/lock-icon.svg" alt="" aria-hidden="true">
+    <h1 id="locked-city-title">This city is locked</h1>
+    <p>{{ errorMessage }}</p>
+    <a class="back-link" routerLink="/">Back to map</a>
+  </section>
+} @else if (errorMessage) {
+  <p class="page-message" role="alert">{{ errorMessage }}</p>
 }
 
 @if (city) {
@@ -15,7 +22,11 @@
       <p class="eyebrow">City level</p>
       <h1>{{ city.name }}</h1>
 
-      <app-city-location-menu [locations]="city.locations"></app-city-location-menu>
+      <app-city-location-menu
+        [locations]="city.locations"
+        [citySlug]="city.slug"
+        [cityName]="city.name"
+      ></app-city-location-menu>
     </div>
   </section>
 }

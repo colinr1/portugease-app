@@ -1,5 +1,6 @@
 package com.portugease.activity;
 
+import com.portugease.location.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     List<Activity> findAllByLocationIdAndActiveTrueOrderByDisplayOrderAsc(UUID locationId);
 
     List<Activity> findAllByLocation_SlugAndActiveTrueOrderByDisplayOrderAsc(String locationSlug);
+
+    long countByLocationAndActiveTrueAndRequiredForCompletionTrue(Location location);
 
 }

@@ -11,10 +11,11 @@ import { ActivityContent } from '../../../core/models/activity.model';
 })
 export class BeachTaskTrayComponent {
   @Input() activities: ActivityContent[] = [];
+  @Input() locationName = 'Location';
+  @Input() open = false;
+  @Input() completedActivityIds: ReadonlySet<string> = new Set<string>();
   @Output() activitySelected = new EventEmitter<ActivityContent>();
   @Output() openChange = new EventEmitter<boolean>();
-
-  open = false;
 
   get sortedActivities(): ActivityContent[] {
     return [...this.activities].sort((a, b) => {
@@ -26,6 +27,19 @@ export class BeachTaskTrayComponent {
 
   get taskCount(): number {
     return this.sortedActivities.length;
+  }
+
+  get trayTitle(): string {
+    return `${this.locationName} Tasks`;
+  }
+
+  isCompleted(activity: ActivityContent): boolean {
+    return this.completedActivityIds.has(activity.id);
+  }
+
+  taskAriaLabel(activity: ActivityContent): string {
+    const completionLabel = this.isCompleted(activity) ? ', completed' : '';
+    return `${this.activityTypeLabel(activity)} task${completionLabel}`;
   }
 
   toggleOpen(): void {

@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { IntroDialogueFocusMarker, IntroDialogueLine, LessonDetail } from '../../../core/models/lesson.model';
 import { ActivityContent } from '../../../core/models/activity.model';
+import { ActivityAttemptResponse } from '../../../core/models/attempt.model';
 import { Hotspot } from '../../../core/models/hotspot.model';
 import {
   IntroDialogueSeenSource,
@@ -15,6 +16,7 @@ import {
   isIntroDialogueHotspot,
   isVocabularyTooltipHotspot
 } from '../../../core/utils/hotspot.util';
+import { isLockedContentError } from '../../../core/utils/http-error.util';
 
 @Component({
   selector: 'app-location-scenario',
@@ -30,6 +32,10 @@ import {
 })
 export class LocationScenarioComponent implements OnChanges {
   @Input({ required: true }) lesson!: LessonDetail;
+  @Input() cityName = 'City';
+
+  @Output() activityFinished = new EventEmitter<ActivityAttemptResponse>();
+  @Output() contentLocked = new EventEmitter<void>();
 
   selectedActivity?: ActivityContent;
   selectedHotspot?: Hotspot;
@@ -38,6 +44,7 @@ export class LocationScenarioComponent implements OnChanges {
   introDialogueOpenedFrom: 'AUTO_OPEN' | 'HOTSPOT' | null = null;
   introFocusMarkers: IntroDialogueFocusMarker[] = [];
   taskTrayOpen = false;
+  completedActivityIds = new Set<string>();
 
   get modalOpen(): boolean {
     return this.introDialogueOpen || Boolean(this.selectedActivity && this.selectedHotspot);
@@ -63,6 +70,7 @@ export class LocationScenarioComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['lesson'] && this.lesson) {
+      this.completedActivityIds = new Set<string>();
       this.resetIntroDialogueOpeningState();
       this.maybeAutoOpenIntroDialogue();
     }
@@ -102,6 +110,29 @@ export class LocationScenarioComponent implements OnChanges {
   closeNormalModal(): void {
     this.selectedHotspot = undefined;
     this.selectedActivity = undefined;
+  }
+
+  returnToTaskTray(): void {
+    this.closeNormalModal();
+    this.taskTrayOpen = true;
+  }
+
+  onAttemptResolved(response: ActivityAttemptResponse): void {
+    if (!response.isCorrect || !response.progressUpdate.activityCompleted) {
+      return;
+    }
+
+    this.completedActivityIds = new Set(this.completedActivityIds).add(response.activityId);
+  }
+
+  onActivityFinished(response: ActivityAttemptResponse): void {
+    this.closeNormalModal();
+    this.activityFinished.emit(response);
+  }
+
+  onContentLocked(): void {
+    this.closeNormalModal();
+    this.contentLocked.emit();
   }
 
   onIntroDialogueClosed(): void {
@@ -188,9 +219,13 @@ export class LocationScenarioComponent implements OnChanges {
         this.markSeenInProgress = false;
         this.resetCurrentIntroOpening();
       },
-      error: () => {
+      error: (error: unknown) => {
         this.markSeenInProgress = false;
         this.resetCurrentIntroOpening();
+
+        if (isLockedContentError(error)) {
+          this.contentLocked.emit();
+        }
       }
     });
   }

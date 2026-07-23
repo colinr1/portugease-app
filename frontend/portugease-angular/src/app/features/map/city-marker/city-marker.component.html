@@ -1,6 +1,6 @@
 <a
   class="city-marker"
-  [routerLink]="locked ? null : ['/cities', city.id]"
+  [routerLink]="locked ? null : ['/cities', city.slug]"
   [class.locked]="locked"
   [class.completed]="city.status === 'COMPLETED'"
   [style.left]="markerStyle['left']"

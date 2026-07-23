@@ -3,19 +3,19 @@
     type="button"
     class="tray-toggle"
     [attr.aria-expanded]="open"
-    aria-controls="beach-task-panel"
+    aria-controls="location-task-panel"
     (click)="toggleOpen()"
   >
-    <span class="toggle-title">Beach Tasks</span>
+    <span class="toggle-title">{{ trayTitle }}</span>
     <span class="toggle-count">{{ taskCount }}</span>
     <span class="toggle-chevron" aria-hidden="true">{{ open ? '⌄' : '⌃' }}</span>
   </button>
 
   @if (open) {
     <section
-      id="beach-task-panel"
+      id="location-task-panel"
       class="task-panel"
-      aria-label="Beach tasks"
+      [attr.aria-label]="trayTitle"
     >
 <!--    <header class="task-panel-header">-->
 <!--      <div>-->
@@ -38,9 +38,18 @@
             type="button"
             class="task-card"
             [ngClass]="activityTypeClass(activity)"
+            [class.completed]="isCompleted(activity)"
+            [attr.aria-label]="taskAriaLabel(activity)"
             (click)="selectActivity(activity)"
           >
             <span class="task-type">{{ activityTypeLabel(activity) }}</span>
+            @if (isCompleted(activity)) {
+              <span class="completion-mark" aria-hidden="true">
+                <svg viewBox="0 0 16 16" focusable="false">
+                  <path d="M3.25 8.25 6.4 11.4 12.75 5.05"></path>
+                </svg>
+              </span>
+            }
           </button>
         }
       </div>

@@ -3,6 +3,7 @@ package com.portugease.activity;
 import com.portugease.activity.dto.ActivityContentResponse;
 import com.portugease.common.enums.DifficultyLevel;
 import com.portugease.common.exception.ResourceNotFoundException;
+import com.portugease.progress.ProgressionService;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
 import com.portugease.user.UserRepository;
@@ -20,27 +21,31 @@ public class ActivityContentService {
     private final AdaptiveDifficultyService adaptiveDifficultyService;
     private final ActivityDefinitionSanitizer activityDefinitionSanitizer;
     private final UserRepository userRepository;
+    private final ProgressionService progressionService;
 
     public ActivityContentService(
             ActivityRepository activityRepository,
             DemoUserService demoUserService,
             AdaptiveDifficultyService adaptiveDifficultyService,
             ActivityDefinitionSanitizer activityDefinitionSanitizer,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ProgressionService progressionService
     ) {
         this.activityRepository = activityRepository;
         this.demoUserService = demoUserService;
         this.adaptiveDifficultyService = adaptiveDifficultyService;
         this.activityDefinitionSanitizer = activityDefinitionSanitizer;
         this.userRepository = userRepository;
+        this.progressionService = progressionService;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ActivityContentResponse getActivity(UUID activityId, UUID userId) {
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new ResourceNotFoundException("Activity not found: " + activityId));
 
         User user = resolveUser(userId);
+        progressionService.assertLocationUnlocked(user, activity.getLocation());
 
         DifficultyLevel selectedDifficulty = adaptiveDifficultyService.getCurrentDifficulty(
                 user,

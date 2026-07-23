@@ -12,6 +12,7 @@ public record LessonDetailResponse(
         UUID id,
         UUID locationId,
         UUID cityId,
+        String citySlug,
         String title,
         String slug,
         AssetMetadataResponse backgroundImage,

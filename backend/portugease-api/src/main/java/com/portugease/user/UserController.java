@@ -2,6 +2,7 @@ package com.portugease.user;
 
 import com.portugease.common.enums.LearnerStatus;
 import com.portugease.common.exception.ResourceNotFoundException;
+import com.portugease.progress.ProgressionService;
 import com.portugease.user.dto.UserSelectionResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final ProgressionService progressionService;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, ProgressionService progressionService) {
         this.userRepository = userRepository;
+        this.progressionService = progressionService;
     }
 
     @GetMapping("/lookup")
@@ -32,6 +35,8 @@ public class UserController {
         if (user.getStatus() != LearnerStatus.ACTIVE) {
             throw new ResourceNotFoundException("User is not active: " + normalisedUsername);
         }
+
+        progressionService.ensureInitialProgress(user);
 
         return new UserSelectionResponse(
                 user.getId(),

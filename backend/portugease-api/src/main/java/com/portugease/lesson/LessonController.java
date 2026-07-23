@@ -26,4 +26,12 @@ public class LessonController {
     ) {
         return lessonContentService.getLesson(lessonId, userId);
     }
+
+    @GetMapping("/by-location-slug/{locationSlug}")
+    public LessonDetailResponse getLessonByLocationSlug(
+            @PathVariable String locationSlug,
+            @RequestParam(required = false) UUID userId
+    ) {
+        return lessonContentService.getLessonByLocationSlug(locationSlug, userId);
+    }
 }

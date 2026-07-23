@@ -11,4 +11,6 @@ import { LocationMenuItem } from '../../../core/models/location.model';
 })
 export class CityLocationMenuComponent {
   @Input({ required: true }) locations: LocationMenuItem[] = [];
+  @Input({ required: true }) citySlug = '';
+  @Input() cityName = 'City';
 }

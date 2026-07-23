@@ -1,13 +1,23 @@
 @if (loading) {
-  <p>Loading location...</p>
+  <p class="page-message" role="status">Loading location...</p>
 }
 
-@if (errorMessage) {
-  <p>{{ errorMessage }}</p>
+@if (locked) {
+  <section class="page-message locked-message" role="alert" aria-labelledby="locked-location-title">
+    <img class="lock-icon" src="assets/images/icons/lock-icon.svg" alt="" aria-hidden="true">
+    <h1 id="locked-location-title">This location is locked</h1>
+    <p>{{ errorMessage }}</p>
+    <a class="back-link" [routerLink]="lockedReturnRoute">{{ lockedReturnLabel }}</a>
+  </section>
+} @else if (errorMessage) {
+  <p class="page-message" role="alert">{{ errorMessage }}</p>
 }
 
 @if (lesson) {
   <app-location-scenario
     [lesson]="lesson"
+    [cityName]="cityName"
+    (activityFinished)="onActivityFinished($event)"
+    (contentLocked)="onContentLocked()"
   />
 }

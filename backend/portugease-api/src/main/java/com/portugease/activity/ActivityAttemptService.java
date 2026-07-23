@@ -8,6 +8,8 @@ import com.portugease.activity.dto.ProgressUpdateSummaryResponse;
 import com.portugease.common.enums.AttemptResult;
 import com.portugease.common.enums.DifficultyLevel;
 import com.portugease.common.exception.ResourceNotFoundException;
+import com.portugease.progress.ProgressionService;
+import com.portugease.progress.dto.ProgressionUpdateResponse;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
 import com.portugease.user.UserRepository;
@@ -30,6 +32,7 @@ public class ActivityAttemptService {
     private final DemoUserService demoUserService;
     private final ActivityEvaluator activityEvaluator;
     private final AdaptiveDifficultyService adaptiveDifficultyService;
+    private final ProgressionService progressionService;
 
     public ActivityAttemptService(
             ActivityRepository activityRepository,
@@ -38,7 +41,8 @@ public class ActivityAttemptService {
             UserRepository userRepository,
             DemoUserService demoUserService,
             ActivityEvaluator activityEvaluator,
-            AdaptiveDifficultyService adaptiveDifficultyService
+            AdaptiveDifficultyService adaptiveDifficultyService,
+            ProgressionService progressionService
     ) {
         this.activityRepository = activityRepository;
         this.activityAttemptRepository = activityAttemptRepository;
@@ -47,6 +51,7 @@ public class ActivityAttemptService {
         this.demoUserService = demoUserService;
         this.activityEvaluator = activityEvaluator;
         this.adaptiveDifficultyService = adaptiveDifficultyService;
+        this.progressionService = progressionService;
     }
 
     @Transactional
@@ -58,6 +63,7 @@ public class ActivityAttemptService {
                 .orElseThrow(() -> new ResourceNotFoundException("Activity not found: " + activityId));
 
         User user = resolveUser(request.userId());
+        progressionService.assertLocationUnlocked(user, activity.getLocation());
 
         DifficultyLevel selectedDifficulty = request.selectedDifficulty() == null
                 ? adaptiveDifficultyService.getCurrentDifficulty(user, activity.getActivityType())
@@ -88,6 +94,9 @@ public class ActivityAttemptService {
                 incorrectBeforeSuccess
         );
 
+        ProgressionUpdateResponse progressionUpdate =
+                progressionService.applyProgressionAfterActivityAttempt(user, activity);
+
         AdaptiveDifficultyService.DifficultyUpdateResult difficultyUpdate =
                 evaluation.correct()
                         ? adaptiveDifficultyService.updateDifficultyAfterCompletedAttempt(user, activity, attempt)
@@ -107,7 +116,8 @@ public class ActivityAttemptService {
                         difficultyUpdate.newDifficulty().name(),
                         difficultyUpdate.message()
                 ),
-                progressUpdate
+                progressUpdate,
+                progressionUpdate
         );
     }
 

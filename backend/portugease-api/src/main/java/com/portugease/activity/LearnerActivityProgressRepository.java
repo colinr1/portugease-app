@@ -1,6 +1,7 @@
 package com.portugease.activity;
 
 import com.portugease.common.enums.ActivityType;
+import com.portugease.location.Location;
 import com.portugease.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,10 @@ public interface LearnerActivityProgressRepository extends JpaRepository<Learner
     List<LearnerActivityProgress> findTop5ByUserAndActivity_ActivityTypeAndCompletedTrueOrderByCompletedAtDesc(
             User user,
             ActivityType activityType
+    );
+
+    long countByUserAndLocationAndCompletedTrueAndActivity_ActiveTrueAndActivity_RequiredForCompletionTrue(
+            User user,
+            Location location
     );
 }

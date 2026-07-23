@@ -19,6 +19,9 @@
       <div class="beach-task-tray-layer">
         <app-beach-task-tray
           [activities]="lesson.activities"
+          [locationName]="lesson.title"
+          [open]="taskTrayOpen"
+          [completedActivityIds]="completedActivityIds"
           (openChange)="onTaskTrayOpenChange($event)"
           (activitySelected)="onActivityTaskSelected($event)"
         ></app-beach-task-tray>
@@ -30,8 +33,13 @@
         <app-scenario-interaction-modal
           [activity]="selectedActivity"
           [locationName]="lesson.title"
+          [cityName]="cityName"
           [hotspot]="selectedHotspot"
           (closed)="closeNormalModal()"
+          (finished)="onActivityFinished($event)"
+          (returned)="returnToTaskTray()"
+          (attemptResolved)="onAttemptResolved($event)"
+          (contentLocked)="onContentLocked()"
         ></app-scenario-interaction-modal>
       }
 
@@ -52,8 +60,13 @@
         class="below-image-modal"
         [activity]="selectedActivity"
         [locationName]="lesson.title"
+        [cityName]="cityName"
         [hotspot]="selectedHotspot"
         (closed)="closeNormalModal()"
+        (finished)="onActivityFinished($event)"
+        (returned)="returnToTaskTray()"
+        (attemptResolved)="onAttemptResolved($event)"
+        (contentLocked)="onContentLocked()"
       ></app-scenario-interaction-modal>
     }
 

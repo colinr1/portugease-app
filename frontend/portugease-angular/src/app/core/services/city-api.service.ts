@@ -26,6 +26,15 @@ export class CityApiService {
     });
   }
 
+  getCityBySlug(citySlug: string): Observable<CityDetail> {
+    return this.http.get<CityDetail>(
+      `${API_BASE_URL}/cities/by-slug/${encodeURIComponent(citySlug)}`,
+      {
+        params: this.userParams()
+      }
+    );
+  }
+
   private userParams(): HttpParams {
     const userId = this.learnerUserService.selectedUserId;
 

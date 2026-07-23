@@ -17,6 +17,7 @@ import com.portugease.location.dto.LocationDetailResponse;
 import com.portugease.location.dto.LocationMenuItemResponse;
 import com.portugease.progress.LearnerLocationProgress;
 import com.portugease.progress.LearnerLocationProgressRepository;
+import com.portugease.progress.ProgressionService;
 import com.portugease.user.DemoUserService;
 import com.portugease.user.User;
 import com.portugease.user.UserRepository;
@@ -37,6 +38,7 @@ public class LocationContentService {
     private final DemoUserService demoUserService;
     private final UserRepository userRepository;
     private final HotspotMapper hotspotMapper;
+    private final ProgressionService progressionService;
 
     public LocationContentService(
             LocationRepository locationRepository,
@@ -44,7 +46,8 @@ public class LocationContentService {
             LearnerLocationProgressRepository learnerLocationProgressRepository,
             DemoUserService demoUserService,
             UserRepository userRepository,
-            HotspotMapper hotspotMapper
+            HotspotMapper hotspotMapper,
+            ProgressionService progressionService
     ) {
         this.locationRepository = locationRepository;
         this.activityRepository = activityRepository;
@@ -52,6 +55,7 @@ public class LocationContentService {
         this.demoUserService = demoUserService;
         this.userRepository = userRepository;
         this.hotspotMapper = hotspotMapper;
+        this.progressionService = progressionService;
     }
 
     @Transactional(readOnly = true)
@@ -64,11 +68,12 @@ public class LocationContentService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LocationDetailResponse getLocation(UUID locationId, UUID userId) {
         User user = resolveUser(userId);
 
         Location location = findLocation(locationId);
+        progressionService.assertLocationUnlocked(user, location);
 
         List<Activity> activities = activityRepository
                 .findAllByLocationIdAndActiveTrueOrderByDisplayOrderAsc(locationId);
@@ -89,13 +94,15 @@ public class LocationContentService {
                 toAsset(location.getBackgroundAsset()),
                 location.getContentJson(),
                 hotspots,
-                getLessonsForLocation(locationId)
+                getLessonsForLocation(locationId, user.getId())
         );
     }
 
-    @Transactional(readOnly = true)
-    public List<LessonSummaryResponse> getLessonsForLocation(UUID locationId) {
+    @Transactional
+    public List<LessonSummaryResponse> getLessonsForLocation(UUID locationId, UUID userId) {
         Location location = findLocation(locationId);
+        User user = resolveUser(userId);
+        progressionService.assertLocationUnlocked(user, location);
 
         return List.of(
                 new LessonSummaryResponse(
@@ -107,9 +114,11 @@ public class LocationContentService {
         );
     }
 
-    @Transactional(readOnly = true)
-    public List<HotspotResponse> getHotspotsForLocation(UUID locationId) {
+    @Transactional
+    public List<HotspotResponse> getHotspotsForLocation(UUID locationId, UUID userId) {
         Location location = findLocation(locationId);
+        User user = resolveUser(userId);
+        progressionService.assertLocationUnlocked(user, location);
 
         List<Activity> activities = activityRepository
                 .findAllByLocationIdAndActiveTrueOrderByDisplayOrderAsc(locationId);
@@ -124,6 +133,7 @@ public class LocationContentService {
     ) {
         Location location = findLocation(locationId);
         User user = resolveUser(request == null ? null : request.userId());
+        progressionService.assertLocationUnlocked(user, location);
 
         /*
          * source is intentionally parsed but not used for progress/unlocking logic.
@@ -132,9 +142,7 @@ public class LocationContentService {
         String source = request == null ? null : request.source();
         IntroDialogueSeenSource.fromNullableString(source);
 
-        LearnerLocationProgress progress = learnerLocationProgressRepository
-                .findByUserAndLocation(user, location)
-                .orElseGet(() -> createInitialLocationProgress(user, location));
+        LearnerLocationProgress progress = progressionService.getUnlockedLocationProgress(user, location);
 
         OffsetDateTime now = OffsetDateTime.now();
 
@@ -157,30 +165,6 @@ public class LocationContentService {
                 saved.getIntroDialogueSeen(),
                 saved.getIntroDialogueSeenAt(),
                 saved.getIntroDialogueReplayCount()
-        );
-    }
-
-    private LearnerLocationProgress createInitialLocationProgress(User user, Location location) {
-        LearnerLocationProgress progress = new LearnerLocationProgress();
-        progress.setUser(user);
-        progress.setLocation(location);
-        progress.setStatus(LocationStatus.UNLOCKED);
-        progress.setScore(0);
-        progress.setCompletedActivitiesCount(0);
-        progress.setTotalRequiredActivitiesCount(countRequiredActivities(location));
-        progress.setUnlockedAt(OffsetDateTime.now());
-        progress.setUpdatedAt(OffsetDateTime.now());
-        progress.setIntroDialogueSeen(false);
-        progress.setIntroDialogueReplayCount(0);
-        return progress;
-    }
-
-    private Integer countRequiredActivities(Location location) {
-        return Math.toIntExact(
-                activityRepository.findAllByLocationIdAndActiveTrueOrderByDisplayOrderAsc(location.getId())
-                        .stream()
-                        .filter(activity -> Boolean.TRUE.equals(activity.getRequiredForCompletion()))
-                        .count()
         );
     }
 
